@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="theme-color" content="#08111f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>연세대학교재활학교 내선번호안내</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css">
+    <script src="app.js"></script>
+</head>
+<body>
+
+<!-- ===== 로딩 ===== -->
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <span style="color:#475569; font-size:0.82rem;">데이터 불러오는 중...</span>
+</div>
+
+<!-- ===== 관리자 로그인 ===== -->
+<div id="loginScreen" class="hidden">
+    <div class="login-box">
+        <div class="login-icon">EXT</div>
+        <h2>관리자 로그인</h2>
+        <p>연락처를 편집하려면 비밀번호를 입력하세요.</p>
+        <div class="form-row">
+            <input type="password" id="loginPassword" placeholder="비밀번호" autocomplete="off">
+        </div>
+        <div style="display:flex; gap:0.5rem; justify-content:center; margin-top:1rem;">
+            <button class="btn btn-primary" id="loginBtn" style="padding:0.45rem 1.25rem;">로그인</button>
+            <button class="btn" id="loginCancel" style="padding:0.45rem 1rem;">취소</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 헤더 ===== -->
+<header class="app-header">
+    <div class="header-brand">
+        <div class="brand-icon">EXT</div>
+        <div>
+            <div class="brand-title">연세대학교재활학교 내선번호안내</div>
+            <div class="brand-sub" id="statInfo">로딩 중...</div>
+        </div>
+    </div>
+    <div class="header-controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="이름 / 번호 검색" autocomplete="off">
+        <select id="filterFloor" class="filter-select"></select>
+        <button class="btn" id="refreshBtn" title="새로고침" style="padding:0.35rem 0.6rem;">&#8635;</button>
+        <button class="btn" id="adminBtn">관리자</button>
+    </div>
+</header>
+
+<!-- ===== 학교 정보 바 ===== -->
+<div class="school-info-bar">
+    <span>우) 03722 서울시 서대문구 연세로 50 연세대학교 116동 재활학교</span>
+    <span class="school-info-sep">|</span>
+    <a href="http://yonsei.sen.sc.kr" target="_blank" rel="noopener" class="school-info-link">&#127760; yonsei.sen.sc.kr</a>
+</div>
+
+<!-- ===== 관리자 배너 ===== -->
+<div class="admin-banner hidden" id="adminBanner">
+    <span>&#9650; 관리자 모드 &nbsp;|&nbsp; 카드 더블클릭/✎=연락처 편집 &nbsp;|&nbsp; 방 헤더 ✎=방 편집</span>
+    <div style="display:flex; gap:0.4rem; flex-shrink:0;">
+        <button class="btn" id="adminDateBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128197; 날짜설정</button>
+        <button class="btn btn-danger" id="adminClearAll" style="font-size:0.72rem; padding:0.25rem 0.6rem; opacity:0.7;" title="모든 연락처 삭제">&#9888; 전체삭제</button>
+        <button class="btn btn-danger" id="adminLogout" style="font-size:0.72rem; padding:0.25rem 0.6rem;">해제</button>
+    </div>
+</div>
+
+<!-- ===== 메인 캔버스 ===== -->
+<main id="canvas" class="canvas">
+    <!-- JS로 렌더링됨 -->
+</main>
+
+<!-- ===== 연락처 편집 모달 ===== -->
+<div class="modal-overlay hidden" id="contactModal">
+    <div class="modal-box">
+        <h3 id="contactModalTitle">연락처 추가</h3>
+        <input type="hidden" id="cm-id">
+        <div class="form-row">
+            <label>직책 / 담당업무 <span style="font-weight:400;opacity:0.5;">(선택)</span></label>
+            <input type="text" id="cm-role" placeholder="예: 교장, 행정실장, 교무담당">
+        </div>
+        <div class="form-row">
+            <label>이름</label>
+            <input type="text" id="cm-name" placeholder="예: 홍길동">
+        </div>
+        <div class="form-row">
+            <label>내선번호</label>
+            <input type="text" id="cm-ext" placeholder="예: 111">
+        </div>
+        <div class="form-row">
+            <label>직통번호</label>
+            <input type="text" id="cm-phone" placeholder="예: 2123-8130">
+        </div>
+        <div class="form-row">
+            <label>비고 <span style="font-weight:400;opacity:0.5;">(선택)</span></label>
+            <input type="text" id="cm-address" placeholder="예: 116동 3층 행정실">
+        </div>
+        <div class="form-row">
+            <label>위치 (층)</label>
+            <select id="cm-floor"></select>
+        </div>
+        <div class="form-row">
+            <label>방 <span style="font-weight:400;opacity:0.5;">(선택)</span></label>
+            <select id="cm-room"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-danger" id="cm-delete" style="margin-right:auto; display:none;">삭제</button>
+            <button class="btn" id="cm-cancel">취소</button>
+            <button class="btn btn-primary" id="cm-save">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 방 편집 모달 ===== -->
+<div class="modal-overlay hidden" id="roomModal">
+    <div class="modal-box">
+        <h3 id="roomModalTitle">방 추가</h3>
+        <input type="hidden" id="rm-id">
+        <div class="form-row">
+            <label>방 이름</label>
+            <input type="text" id="rm-name" placeholder="예: 교무실">
+        </div>
+        <div class="form-row">
+            <label>대표번호</label>
+            <input type="text" id="rm-phone" placeholder="예: 2123-8130">
+        </div>
+        <div class="form-row">
+            <label>전화번호 ②</label>
+            <input type="text" id="rm-phone2" placeholder="예: 2123-8199">
+        </div>
+        <div class="form-row">
+            <label>팩스번호</label>
+            <input type="text" id="rm-fax" placeholder="예: 2123-8199">
+        </div>
+        <div class="form-row">
+            <label>위치 (층)</label>
+            <select id="rm-floor"></select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-danger" id="rm-delete" style="margin-right:auto; display:none;">삭제</button>
+            <button class="btn" id="rm-cancel">취소</button>
+            <button class="btn btn-primary" id="rm-save">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 날짜설정 모달 ===== -->
+<div class="modal-overlay hidden" id="dateModal">
+    <div class="modal-box" style="max-width:300px;">
+        <h3>&#128197; 업데이트 날짜 설정</h3>
+        <div class="form-row">
+            <label>번호표 업데이트 날짜</label>
+            <input type="date" id="dm-date">
+        </div>
+        <div class="modal-actions">
+            <button class="btn" id="dm-cancel">취소</button>
+            <button class="btn btn-primary" id="dm-save">저장</button>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 검색 결과 패널 ===== -->
+<div id="searchResults" class="search-results hidden"></div>
+
+<!-- ===== 토스트 ===== -->
+<div id="toast" class="toast"></div>
+
+<!-- ===== 푸터 ===== -->
+<footer>
+    우) 03722 서울시 서대문구 연세로50 연세대학교 116동 재활학교 &nbsp;|&nbsp; yonsei.sen.sc.kr
+</footer>
+
+<script>
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(function(e) {
+        console.warn('[SW] 등록 실패:', e);
+    });
+}
+</script>
+
+</body>
+</html>

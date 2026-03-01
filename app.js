@@ -21,6 +21,29 @@ function escHtml(str) {
         .replace(/"/g, '&quot;');
 }
 
+// ===== 전화번호 정규화 =====
+function toDialNum(num, areaCode) {
+    if (!num) return '';
+    var n = num.replace(/[^0-9]/g, '');
+    if (n.charAt(0) !== '0') n = (areaCode || '02').replace(/[^0-9]/g, '') + n;
+    return n;
+}
+
+// ===== 즐겨찾기 =====
+var Favorites = {
+    _key: 'ext_favorites',
+    getAll: function() {
+        try { return JSON.parse(localStorage.getItem(this._key)) || []; } catch(e) { return []; }
+    },
+    toggle: function(id) {
+        var f = this.getAll(), idx = f.indexOf(id);
+        if (idx >= 0) f.splice(idx, 1); else f.push(id);
+        localStorage.setItem(this._key, JSON.stringify(f));
+        return idx < 0;
+    },
+    has: function(id) { return this.getAll().indexOf(id) >= 0; }
+};
+
 // ===== 상수 =====
 var DEFAULT_PASSWORD = '1234';
 
@@ -240,6 +263,11 @@ var ContactDB = {
         await this._save();
     },
 
+    saveSettings: async function(settingsObj) {
+        Object.assign(this._data.settings, settingsObj);
+        await this._save();
+    },
+
     clearAll: async function() {
         this._data.contacts = {};
         this._data.rooms    = {};
@@ -271,11 +299,23 @@ var ContactDB = {
 
 // ===== 카드 렌더 헬퍼 =====
 function renderCard(c, isAdmin) {
+    var s = ContactDB._data.settings || {};
     var h = '<div class="contact-card' + (isAdmin ? ' is-admin' : '') + '" data-id="' + c.id + '">';
-    if (c.role) h += '<div class="cc-role">' + escHtml(c.role) + '</div>';
+    if (!isAdmin) {
+        var fav = Favorites.has(c.id);
+        h += '<button class="cc-fav-btn' + (fav ? ' active' : '') + '" data-id="' + c.id + '">'
+           + (fav ? '★' : '☆') + '</button>';
+    }
+    if (c.role)    h += '<div class="cc-role">' + escHtml(c.role) + '</div>';
     h += '<div class="cc-name">' + escHtml(c.name) + '</div>';
-    if (c.ext)     h += '<div class="cc-ext">내선 ' + escHtml(c.ext) + '</div>';
-    if (c.phone)   h += '<div class="cc-phone">' + escHtml(c.phone) + '</div>';
+    if (c.ext) {
+        var main = toDialNum(s.mainPhone || '', s.areaCode || '02');
+        var extHref = main ? ' href="tel:' + main + ',,' + c.ext + '"' : '';
+        h += '<a class="cc-ext"' + extHref + '>내선 ' + escHtml(c.ext) + '</a>';
+    }
+    if (c.phone) {
+        h += '<a class="cc-phone" href="tel:' + toDialNum(c.phone, s.areaCode || '02') + '">' + escHtml(c.phone) + '</a>';
+    }
     if (c.address) h += '<div class="cc-address">' + escHtml(c.address) + '</div>';
     if (isAdmin)   h += '<button class="cc-edit-btn" data-id="' + c.id + '" title="편집">✎</button>';
     h += '</div>';
@@ -290,12 +330,50 @@ var Renderer = {
         var rooms       = App.state.rooms;
         var filterFloor = App.state.filterFloor;
         var isAdmin     = App.state.isAdmin;
+        var s           = ContactDB._data.settings || {};
+        var html        = '';
+
+        // ── 즐겨찾기 전용 뷰 ──
+        if (filterFloor === '_favorites') {
+            var allFavIds = Favorites.getAll();
+            var allFavContacts = allFavIds.map(function(id) { return contacts[id]; }).filter(Boolean);
+            if (allFavContacts.length > 0) {
+                html += '<section class="floor-section" style="--fc:#fbbf24">';
+                html += '<div class="floor-header">';
+                html += '<span class="floor-name">★ 즐겨찾기</span>';
+                html += '<span class="floor-count">' + allFavContacts.length + '명</span>';
+                html += '</div><div class="contact-grid">';
+                allFavContacts.forEach(function(c) { html += renderCard(c, false); });
+                html += '</div></section>';
+            } else {
+                html = '<div class="cc-empty" style="padding:2rem;">즐겨찾기가 없습니다. 카드의 ☆ 버튼을 눌러 추가하세요.</div>';
+            }
+            canvas.innerHTML = html;
+            App.bindCanvasEvents();
+            return;
+        }
 
         var floors = filterFloor
             ? FLOORS.filter(function(f) { return f.id === filterFloor; })
             : FLOORS;
 
-        var html = '';
+        // ── 전체 뷰 상단 즐겨찾기 섹션 (비관리자) ──
+        if (!isAdmin && !filterFloor) {
+            var topFavIds = Favorites.getAll();
+            if (topFavIds.length > 0) {
+                var topFavContacts = topFavIds.map(function(id) { return contacts[id]; }).filter(Boolean);
+                if (topFavContacts.length > 0) {
+                    html += '<section class="floor-section" style="--fc:#fbbf24">';
+                    html += '<div class="floor-header">';
+                    html += '<span class="floor-name">★ 즐겨찾기</span>';
+                    html += '<span class="floor-count">' + topFavContacts.length + '명</span>';
+                    html += '</div><div class="contact-grid">';
+                    topFavContacts.forEach(function(c) { html += renderCard(c, false); });
+                    html += '</div></section>';
+                }
+            }
+        }
+
         floors.forEach(function(floor) {
             var floorContacts = Object.values(contacts)
                 .filter(function(c) { return c.floorId === floor.id; })
@@ -325,9 +403,15 @@ var Renderer = {
                 html += '<div class="room-section" data-room-id="' + room.id + '">';
                 html += '<div class="room-header">';
                 html += '<span class="room-name">' + escHtml(room.name) + '</span>';
-                if (room.mainPhone) html += '<span class="room-phone">TEL ' + escHtml(room.mainPhone) + '</span>';
-                if (room.phone2)    html += '<span class="room-phone2">TEL ' + escHtml(room.phone2) + '</span>';
-                if (room.fax)       html += '<span class="room-fax">FAX ' + escHtml(room.fax) + '</span>';
+                if (room.mainPhone) {
+                    var d = toDialNum(room.mainPhone, s.areaCode || '02');
+                    html += '<a class="room-phone" href="tel:' + d + '">TEL ' + escHtml(room.mainPhone) + '</a>';
+                }
+                if (room.phone2) {
+                    var d2 = toDialNum(room.phone2, s.areaCode || '02');
+                    html += '<a class="room-phone2" href="tel:' + d2 + '">TEL ' + escHtml(room.phone2) + '</a>';
+                }
+                if (room.fax) html += '<span class="room-fax">FAX ' + escHtml(room.fax) + '</span>';
                 if (isAdmin) html += '<button class="room-edit-btn" data-id="' + room.id + '" title="방 편집">✎</button>';
                 html += '</div>';
                 html += '<div class="contact-grid">';
@@ -507,6 +591,30 @@ var App = {
             document.getElementById('roomModal').classList.add('hidden');
         });
         document.getElementById('rm-delete').addEventListener('click', function() { self.deleteRoomFromModal(); });
+
+        // 설정 모달
+        document.getElementById('settingsBtn').addEventListener('click', function() {
+            var s = ContactDB._data.settings || {};
+            document.getElementById('st-mainPhone').value = s.mainPhone || '';
+            document.getElementById('st-areaCode').value  = s.areaCode  || '02';
+            document.getElementById('settingsModal').classList.remove('hidden');
+        });
+        document.getElementById('st-save').addEventListener('click', async function() {
+            var mainPhone = document.getElementById('st-mainPhone').value.trim();
+            var areaCode  = document.getElementById('st-areaCode').value.trim() || '02';
+            await ContactDB.saveSettings({ mainPhone: mainPhone, areaCode: areaCode });
+            document.getElementById('settingsModal').classList.add('hidden');
+            App.showToast('설정 저장 완료', 'success');
+        });
+        document.getElementById('st-cancel').addEventListener('click', function() {
+            document.getElementById('settingsModal').classList.add('hidden');
+        });
+
+        // 인쇄 버튼
+        document.getElementById('printBtn').addEventListener('click', function() {
+            var f = document.getElementById('printFloorSel').value;
+            App.print(f || null);
+        });
     },
 
     // 이벤트 위임 (canvas 클릭)
@@ -516,6 +624,14 @@ var App = {
 
         if (canvas._clickHandler) canvas.removeEventListener('click', canvas._clickHandler);
         canvas._clickHandler = function(e) {
+            var favBtn = e.target.closest('.cc-fav-btn');
+            if (favBtn) {
+                e.stopPropagation();
+                Favorites.toggle(favBtn.dataset.id);
+                Renderer.render();
+                return;
+            }
+
             var editBtn = e.target.closest('.cc-edit-btn');
             if (editBtn) { self.openContactModal(editBtn.dataset.id); return; }
 
@@ -541,9 +657,16 @@ var App = {
 
     updateFloorFilter: function() {
         var sel = document.getElementById('filterFloor');
-        sel.innerHTML = '<option value="">전체 층</option>';
+        sel.innerHTML = '<option value="">전체 층</option>'
+                      + '<option value="_favorites">★ 즐겨찾기</option>';
         FLOORS.forEach(function(f) {
             sel.innerHTML += '<option value="' + f.id + '">' + f.name + '</option>';
+        });
+
+        var psel = document.getElementById('printFloorSel');
+        psel.innerHTML = '<option value="">전체</option>';
+        FLOORS.forEach(function(f) {
+            psel.innerHTML += '<option value="' + f.id + '">' + f.name + '</option>';
         });
     },
 
@@ -837,6 +960,66 @@ var App = {
         document.getElementById('dateModal').classList.add('hidden');
         this.updateStatInfo();
         this.showToast('업데이트 날짜 저장 완료', 'success');
+    },
+
+    print: function(floorId) {
+        var contacts = this.state.contacts;
+        var rooms    = this.state.rooms;
+        var s        = ContactDB._data.settings || {};
+        var floors   = floorId
+            ? FLOORS.filter(function(f) { return f.id === floorId; })
+            : FLOORS;
+
+        var html = '<div class="print-title">'
+                 + '<strong>연세재활학교 내선번호부</strong>'
+                 + (s.lastUpdated ? '<span>' + escHtml(s.lastUpdated) + ' 기준</span>' : '')
+                 + '</div><div class="print-columns">';
+
+        floors.forEach(function(floor) {
+            var floorContacts = Object.values(contacts)
+                .filter(function(c) { return c.floorId === floor.id; })
+                .sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+            var floorRooms = Object.values(rooms)
+                .filter(function(r) { return r.floorId === floor.id; })
+                .sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+            if (!floorContacts.length && !floorRooms.length) return;
+
+            html += '<div class="print-floor">';
+            html += '<div class="print-floor-name">' + escHtml(floor.name) + '</div>';
+
+            floorRooms.forEach(function(room) {
+                var rc = floorContacts.filter(function(c) { return c.roomId === room.id; });
+                html += '<div class="print-room">';
+                html += '<span class="print-room-name">' + escHtml(room.name) + '</span>';
+                if (room.mainPhone) html += '<span class="print-room-phone"> ' + escHtml(room.mainPhone) + '</span>';
+                html += '<div class="print-persons">';
+                rc.forEach(function(c) {
+                    html += '<div class="print-row">'
+                         + '<span class="pr-name">' + escHtml(c.name) + '</span>'
+                         + (c.role  ? '<span class="pr-role">'  + escHtml(c.role)  + '</span>' : '')
+                         + (c.ext   ? '<span class="pr-ext">'   + escHtml(c.ext)   + '</span>' : '')
+                         + (c.phone ? '<span class="pr-phone">'  + escHtml(c.phone) + '</span>' : '')
+                         + '</div>';
+                });
+                html += '</div></div>';
+            });
+
+            var free = floorContacts.filter(function(c) { return !c.roomId; });
+            free.forEach(function(c) {
+                html += '<div class="print-row">'
+                     + '<span class="pr-name">' + escHtml(c.name) + '</span>'
+                     + (c.role  ? '<span class="pr-role">'  + escHtml(c.role)  + '</span>' : '')
+                     + (c.ext   ? '<span class="pr-ext">'   + escHtml(c.ext)   + '</span>' : '')
+                     + (c.phone ? '<span class="pr-phone">'  + escHtml(c.phone) + '</span>' : '')
+                     + '</div>';
+            });
+
+            html += '</div>';
+        });
+
+        html += '</div>';
+        document.getElementById('printLayout').innerHTML = html;
+        window.print();
     },
 
     showToast: function(msg, type) {

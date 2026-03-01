@@ -293,21 +293,27 @@ body {
 }
 
 .cc-ext {
+    display: block;
     font-size: 0.92rem;
     font-weight: 800;
     color: var(--ext-color);
     font-family: 'Consolas', 'Courier New', monospace;
     letter-spacing: 0.03em;
     transition: color 0.35s;
+    text-decoration: none;
 }
+.cc-ext[href]:hover { opacity: 0.8; text-decoration: underline dotted; }
 
 .cc-phone {
+    display: block;
     font-size: 0.87rem;
     font-weight: 700;
     color: var(--phone-color);
     font-family: 'Consolas', 'Courier New', monospace;
     transition: color 0.35s;
+    text-decoration: none;
 }
+.cc-phone[href]:hover { opacity: 0.8; text-decoration: underline dotted; }
 
 .cc-address {
     font-size: 0.79rem;
@@ -316,6 +322,23 @@ body {
     word-break: keep-all;
     overflow-wrap: break-word;
 }
+
+.cc-fav-btn {
+    position: absolute;
+    top: 0.3rem;
+    right: 0.3rem;
+    width: 18px; height: 18px;
+    border: none;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.18);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.15s;
+}
+.cc-fav-btn:hover { color: #fbbf24; }
+.cc-fav-btn.active { color: #fbbf24; }
 
 .cc-edit-btn {
     position: absolute;
@@ -569,9 +592,10 @@ body {
     border-left: 3px solid color-mix(in srgb, var(--fc) 80%, transparent);
 }
 .room-name   { font-size: 0.95rem; font-weight: 800; color: color-mix(in srgb, var(--fc) 60%, white); letter-spacing: 0.01em; }
-.room-phone  { font-size: 0.93rem; font-weight: 700; color: var(--phone-color); }
-.room-phone2 { font-size: 0.93rem; font-weight: 700; color: color-mix(in srgb, var(--phone-color) 80%, white); }
+.room-phone  { font-size: 0.93rem; font-weight: 700; color: var(--phone-color); text-decoration: none; }
+.room-phone2 { font-size: 0.93rem; font-weight: 700; color: color-mix(in srgb, var(--phone-color) 80%, white); text-decoration: none; }
 .room-fax    { font-size: 0.85rem; font-weight: 600; color: #94a3b8; }
+.room-phone[href]:hover, .room-phone2[href]:hover { opacity: 0.8; }
 
 .room-edit-btn {
     margin-left: auto;
@@ -607,6 +631,60 @@ footer {
     font-size: 0.7rem;
     border-top: 1px solid rgba(255,255,255,0.05);
     margin-top: 1rem;
+}
+
+/* ===== Print Layout (화면에서 숨김) ===== */
+#printLayout { display: none; }
+
+@media print {
+    @page { size: A4 portrait; margin: 10mm; }
+
+    /* 화면 UI 숨기기 */
+    .app-header, .school-info-bar, .admin-banner,
+    #canvas, #loadingOverlay, #toast, #loginScreen,
+    .modal-overlay, .search-results { display: none !important; }
+
+    /* 인쇄 레이아웃 표시 */
+    #printLayout { display: block !important; }
+
+    body {
+        background: white !important;
+        background-image: none !important;
+        color: black !important;
+        font-size: 8pt;
+    }
+
+    .print-title {
+        text-align: center;
+        border-bottom: 1.5pt solid #000;
+        padding-bottom: 3mm;
+        margin-bottom: 4mm;
+    }
+    .print-title strong { font-size: 13pt; }
+    .print-title span   { font-size: 8pt; color: #555; margin-left: 8px; }
+
+    .print-columns { columns: 3; column-gap: 5mm; column-rule: 1pt solid #ccc; }
+
+    .print-floor { break-inside: avoid; margin-bottom: 4mm; }
+    .print-floor-name {
+        font-size: 9pt; font-weight: 900;
+        background: #222; color: white;
+        padding: 1mm 2mm; margin-bottom: 2mm;
+    }
+
+    .print-room { margin-bottom: 2mm; }
+    .print-room-name  { font-size: 8pt; font-weight: 700; display: inline; }
+    .print-room-phone { font-size: 7pt; color: #555; }
+
+    .print-persons { padding-left: 2mm; }
+    .print-row {
+        display: flex; gap: 2mm; font-size: 7.5pt;
+        border-bottom: 0.5pt dotted #ccc; padding: 0.5mm 0;
+    }
+    .pr-name  { font-weight: 700; min-width: 4em; }
+    .pr-role  { color: #555; min-width: 4em; font-size: 6.5pt; }
+    .pr-ext   { color: #1a5; font-weight: 700; min-width: 3em; }
+    .pr-phone { color: #555; font-size: 7pt; }
 }
 
 /* ===== Responsive ===== */

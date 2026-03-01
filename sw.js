@@ -30,6 +30,9 @@ self.addEventListener('fetch', function(e) {
     // GET 요청만 처리
     if (e.request.method !== 'GET') return;
 
+    // http/https 요청만 처리 (chrome-extension 등 제외)
+    if (!e.request.url.startsWith('http')) return;
+
     // Network-First: 항상 네트워크에서 먼저 가져오고, 실패 시 캐시 사용
     e.respondWith(
         fetch(e.request).then(function(res) {

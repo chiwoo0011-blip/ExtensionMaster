@@ -23,5 +23,7 @@
     }
   ],
   "categories": ["business", "productivity"],
-  "lang": "ko-KR"
+  "lang": "ko-KR",
+  "min_width": 360,
+  "min_height": 500
 }

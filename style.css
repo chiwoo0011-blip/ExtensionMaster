@@ -50,6 +50,7 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+html { min-width: 360px; }
 
 body {
     min-height: 100vh;
@@ -610,18 +611,18 @@ footer {
 
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
-    .canvas { padding: 0.75rem 0.5rem 9rem; }
+    .canvas { padding: 0.75rem 0.4rem 9rem; }
 
-    /* 2열 고정 그리드 */
-    .contact-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; padding: 0.5rem; }
+    /* 3열 고정 그리드 */
+    .contact-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; padding: 0.4rem; }
 
     /* 카드 컴팩트 */
-    .contact-card { padding: 0.5rem 0.6rem; line-height: 1.4; }
-    .cc-name    { font-size: 0.9rem; }
-    .cc-role    { font-size: 0.68rem; }
-    .cc-ext     { font-size: 0.84rem; }
-    .cc-phone   { font-size: 0.78rem; }
-    .cc-address { font-size: 0.7rem; }
+    .contact-card { padding: 0.42rem 0.5rem; line-height: 1.35; }
+    .cc-name    { font-size: 0.82rem; }
+    .cc-role    { font-size: 0.62rem; }
+    .cc-ext     { font-size: 0.78rem; }
+    .cc-phone   { font-size: 0.72rem; }
+    .cc-address { font-size: 0.64rem; }
 
     /* 방 헤더 컴팩트 */
     .room-section { margin: 0 0.4rem 0.4rem; }

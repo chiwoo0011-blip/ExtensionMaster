@@ -532,12 +532,20 @@ var App = {
         el.textContent = txt;
     },
 
-    _logoutAdmin: function() {
+    _logoutAdmin: async function() {
+        var btn = document.getElementById('adminLogout');
+        if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
+        try {
+            await ContactDB._save();
+        } catch(e) {
+            if (btn) { btn.disabled = false; btn.textContent = '저장후나감'; }
+            return;
+        }
         this.state.isAdmin = false;
         sessionStorage.removeItem('ext_admin');
         Renderer.render();
         this.updateAdminUI();
-        this.showToast('관리자 모드 해제', 'info');
+        this.showToast('저장 완료 · 관리자 모드 종료', 'success');
     },
 
     doLogin: function() {

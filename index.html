@@ -54,23 +54,6 @@
     </div>
 </header>
 
-<!-- ===== 학교 정보 바 ===== -->
-<div class="school-info-bar">
-    <span>우) 03722 서울시 서대문구 연세로 50 연세대학교 116동 재활학교</span>
-    <span class="school-info-sep">|</span>
-    <a href="http://yonsei.sen.sc.kr" target="_blank" rel="noopener" class="school-info-link">&#127760; yonsei.sen.sc.kr</a>
-</div>
-
-<!-- ===== 관리자 배너 ===== -->
-<div class="admin-banner hidden" id="adminBanner">
-    <span>&#9650; 관리자 모드 &nbsp;|&nbsp; 카드 더블클릭/✎=연락처 편집 &nbsp;|&nbsp; 방 헤더 ✎=방 편집</span>
-    <div style="display:flex; gap:0.4rem; flex-shrink:0;">
-        <button class="btn" id="adminDateBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128197; 날짜설정</button>
-        <button class="btn btn-danger" id="adminClearAll" style="font-size:0.72rem; padding:0.25rem 0.6rem; opacity:0.7;" title="모든 연락처 삭제">&#9888; 전체삭제</button>
-        <button class="btn btn-danger" id="adminLogout" style="font-size:0.72rem; padding:0.25rem 0.6rem;">해제</button>
-    </div>
-</div>
-
 <!-- ===== 메인 캔버스 ===== -->
 <main id="canvas" class="canvas">
     <!-- JS로 렌더링됨 -->
@@ -171,10 +154,22 @@
 <!-- ===== 토스트 ===== -->
 <div id="toast" class="toast"></div>
 
-<!-- ===== 푸터 ===== -->
-<footer>
-    우) 03722 서울시 서대문구 연세로50 연세대학교 116동 재활학교 &nbsp;|&nbsp; yonsei.sen.sc.kr
-</footer>
+<!-- ===== 관리자 배너 (하단 고정) ===== -->
+<div class="admin-banner hidden" id="adminBanner">
+    <span>&#9650; 관리자 모드 &nbsp;|&nbsp; 카드 더블클릭/✎=연락처 편집 &nbsp;|&nbsp; 방 헤더 ✎=방 편집</span>
+    <div style="display:flex; gap:0.4rem; flex-shrink:0;">
+        <button class="btn" id="adminDateBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128197; 날짜설정</button>
+        <button class="btn btn-danger" id="adminClearAll" style="font-size:0.72rem; padding:0.25rem 0.6rem; opacity:0.7;" title="모든 연락처 삭제">&#9888; 전체삭제</button>
+        <button class="btn btn-danger" id="adminLogout" style="font-size:0.72rem; padding:0.25rem 0.6rem;">저장후나감</button>
+    </div>
+</div>
+
+<!-- ===== 학교 정보 바 (하단 고정) ===== -->
+<div class="school-info-bar">
+    <span>우) 03722 서울시 서대문구 연세로 50 연세대학교 116동 재활학교</span>
+    <span class="school-info-sep">|</span>
+    <a href="http://yonsei.sen.sc.kr" target="_blank" rel="noopener" class="school-info-link">&#127760; yonsei.sen.sc.kr</a>
+</div>
 
 <script>
 if ('serviceWorker' in navigator) {

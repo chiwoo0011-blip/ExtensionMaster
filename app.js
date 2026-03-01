@@ -127,14 +127,22 @@ var ContactDB = {
             };
             // 로컬 캐시 즉시 업데이트 (오프라인 대비)
             localStorage.setItem('extension_data_v4', JSON.stringify(payload));
-            // 서버 동기화
-            var res = await fetch('/api/data', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(Object.assign({}, payload, {
-                    adminPassword: this._data.settings.admin_password
-                }))
-            });
+            // 서버 동기화 (8초 타임아웃)
+            var ctrl = new AbortController();
+            var tid  = setTimeout(function() { ctrl.abort(); }, 8000);
+            var res;
+            try {
+                res = await fetch('/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.assign({}, payload, {
+                        adminPassword: this._data.settings.admin_password
+                    })),
+                    signal: ctrl.signal
+                });
+            } finally {
+                clearTimeout(tid);
+            }
             if (!res.ok) {
                 var err = await res.json().catch(function() { return {}; });
                 throw new Error(err.error || '저장 실패 (' + res.status + ')');

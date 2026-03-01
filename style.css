@@ -1,5 +1,6 @@
 /* ===== ExtensionMaster v4 - Vercel 웹 버전 ===== */
 
+/* ===== 테마 변수 ===== */
 :root {
     --primary: #6366f1;
     --secondary: #a855f7;
@@ -8,6 +9,44 @@
     --text: #e2e8f0;
     --text-muted: #94a3b8;
     --glass-border: rgba(255, 255, 255, 0.15);
+
+    /* 테마 공통 */
+    --body-bg:   #08111f;
+    --bg-grad-1: rgba(40, 55, 110, 0.7);
+    --bg-grad-2: rgba(70, 30, 110, 0.55);
+    --card-bg:   rgba(8, 15, 30, 0.9);
+    --ext-color:   #86efac;
+    --phone-color: #fed7aa;
+}
+
+/* 미드나잇 */
+[data-theme="midnight"] {
+    --body-bg:   #000814;
+    --bg-grad-1: rgba(10, 20, 60, 0.85);
+    --bg-grad-2: rgba(30, 10, 60, 0.65);
+    --card-bg:   rgba(0, 5, 20, 0.92);
+    --ext-color:   #67e8f9;
+    --phone-color: #c4b5fd;
+}
+
+/* 포레스트 */
+[data-theme="forest"] {
+    --body-bg:   #050f08;
+    --bg-grad-1: rgba(10, 50, 20, 0.75);
+    --bg-grad-2: rgba(5, 35, 30, 0.65);
+    --card-bg:   rgba(3, 12, 6, 0.92);
+    --ext-color:   #bbf7d0;
+    --phone-color: #fde68a;
+}
+
+/* 선셋 */
+[data-theme="sunset"] {
+    --body-bg:   #130600;
+    --bg-grad-1: rgba(80, 25, 8, 0.75);
+    --bg-grad-2: rgba(60, 10, 28, 0.65);
+    --card-bg:   rgba(20, 5, 2, 0.92);
+    --ext-color:   #fda4af;
+    --phone-color: #fcd34d;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -15,14 +54,15 @@
 body {
     min-height: 100vh;
     font-family: 'Malgun Gothic', 'Inter', sans-serif;
-    background-color: #08111f;
+    background-color: var(--body-bg);
     background-image:
-        radial-gradient(ellipse at 20% 20%, rgba(40, 55, 110, 0.7) 0%, transparent 55%),
-        radial-gradient(ellipse at 80% 80%, rgba(70, 30, 110, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 20%, var(--bg-grad-1) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, var(--bg-grad-2) 0%, transparent 55%),
         radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.04) 1px, transparent 0);
     background-size: 100% 100%, 100% 100%, 36px 36px;
     color: var(--text);
     overflow-x: hidden;
+    transition: background-color 0.35s;
 }
 
 /* ===== Header ===== */
@@ -172,12 +212,14 @@ body {
     gap: 1.5rem;
 }
 
-/* ===== Floor Section ===== */
+/* ===== Floor Section (층별 색상: --fc 변수 사용) ===== */
 .floor-section {
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid var(--glass-border);
+    --fc: #6366f1; /* 기본값, JS에서 인라인 스타일로 덮어씀 */
+    background: color-mix(in srgb, var(--fc) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--fc) 35%, transparent);
     border-radius: 0.5rem;
     overflow: hidden;
+    transition: border-color 0.2s;
 }
 
 .floor-header {
@@ -185,9 +227,9 @@ body {
     align-items: center;
     gap: 0.6rem;
     padding: 0.5rem 1rem;
-    background: rgba(0, 0, 0, 0.25);
-    border-bottom: 1px solid var(--glass-border);
-    border-left: 3px solid #6366f1;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--fc) 18%, transparent) 0%, rgba(0,0,0,0.2) 65%);
+    border-bottom: 1px solid color-mix(in srgb, var(--fc) 25%, transparent);
+    border-left: 3px solid var(--fc);
 }
 
 .floor-name {
@@ -214,12 +256,12 @@ body {
 /* ===== Contact Card ===== */
 .contact-card {
     position: relative;
-    background: rgba(8, 15, 30, 0.9);
+    background: var(--card-bg);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 0.4rem;
     padding: 0.7rem 0.85rem;
     line-height: 1.55;
-    transition: border-color 0.18s, box-shadow 0.18s;
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.35s;
     min-width: 0;
 }
 
@@ -252,16 +294,18 @@ body {
 .cc-ext {
     font-size: 0.92rem;
     font-weight: 800;
-    color: #86efac;
+    color: var(--ext-color);
     font-family: 'Consolas', 'Courier New', monospace;
     letter-spacing: 0.03em;
+    transition: color 0.35s;
 }
 
 .cc-phone {
     font-size: 0.87rem;
     font-weight: 700;
-    color: #fed7aa;
+    color: var(--phone-color);
     font-family: 'Consolas', 'Courier New', monospace;
+    transition: color 0.35s;
 }
 
 .cc-address {
@@ -495,22 +539,22 @@ body {
     100% { box-shadow: 0 0 0 2px rgba(99,102,241,0.7), 0 0 28px rgba(99,102,241,0.45); }
 }
 
-/* ===== Room ===== */
+/* ===== Room (층 색상 --fc 상속) ===== */
 .floor-room-btn {
     font-size: 0.72rem;
     padding: 0.2rem 0.55rem;
-    background: rgba(168,85,247,0.18);
+    background: color-mix(in srgb, var(--fc) 18%, transparent);
     color: #e9d5ff;
-    border-color: rgba(168,85,247,0.4);
+    border-color: color-mix(in srgb, var(--fc) 40%, transparent);
 }
-.floor-room-btn:hover { background: rgba(168,85,247,0.32); }
+.floor-room-btn:hover { background: color-mix(in srgb, var(--fc) 32%, transparent); }
 
 .room-section {
-    border: 1px solid rgba(168,85,247,0.35);
+    border: 1px solid color-mix(in srgb, var(--fc) 38%, transparent);
     border-radius: 0.35rem;
     margin: 0 0.75rem 0.5rem;
     overflow: hidden;
-    background: rgba(168, 85, 247, 0.06);
+    background: color-mix(in srgb, var(--fc) 7%, transparent);
 }
 
 .room-header {
@@ -519,13 +563,13 @@ body {
     flex-wrap: wrap;
     gap: 0.45rem 0.7rem;
     padding: 0.45rem 0.75rem;
-    background: rgba(168, 85, 247, 0.22);
-    border-bottom: 1px solid rgba(168,85,247,0.25);
-    border-left: 3px solid rgba(168,85,247,0.75);
+    background: color-mix(in srgb, var(--fc) 22%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--fc) 28%, transparent);
+    border-left: 3px solid color-mix(in srgb, var(--fc) 80%, transparent);
 }
-.room-name   { font-size: 0.95rem; font-weight: 800; color: #ede9fe; letter-spacing: 0.01em; }
-.room-phone  { font-size: 0.93rem; font-weight: 700; color: #fde68a; }
-.room-phone2 { font-size: 0.93rem; font-weight: 700; color: #bfdbfe; }
+.room-name   { font-size: 0.95rem; font-weight: 800; color: color-mix(in srgb, var(--fc) 60%, white); letter-spacing: 0.01em; }
+.room-phone  { font-size: 0.93rem; font-weight: 700; color: var(--phone-color); }
+.room-phone2 { font-size: 0.93rem; font-weight: 700; color: color-mix(in srgb, var(--phone-color) 80%, white); }
 .room-fax    { font-size: 0.85rem; font-weight: 600; color: #94a3b8; }
 
 .room-edit-btn {
@@ -542,6 +586,17 @@ body {
 }
 .room-header:hover .room-edit-btn { opacity: 1; }
 .room-edit-btn:hover { background: rgba(168,85,247,0.25); }
+
+/* ===== Theme Button ===== */
+#themeBtn {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.7rem;
+    background: rgba(99,102,241,0.12);
+    border-color: rgba(99,102,241,0.3);
+    color: #a5b4fc;
+    min-width: 80px;
+}
+#themeBtn:hover { background: rgba(99,102,241,0.25); }
 
 /* ===== Footer ===== */
 footer {

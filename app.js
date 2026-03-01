@@ -34,6 +34,24 @@ var FLOORS = [
 ];
 FLOORS.sort(function(a, b) { return a.order - b.order; });
 
+// ===== 테마 =====
+var THEMES      = ['dark', 'midnight', 'forest', 'sunset'];
+var THEME_NAMES = { dark: '🌙 다크', midnight: '🔵 미드나잇', forest: '🌿 포레스트', sunset: '🌅 선셋' };
+
+function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    localStorage.setItem('ext_theme', theme);
+    var btn = document.getElementById('themeBtn');
+    if (btn) btn.textContent = THEME_NAMES[theme] || theme;
+}
+function initTheme() {
+    applyTheme(localStorage.getItem('ext_theme') || 'dark');
+}
+function cycleTheme() {
+    var cur = document.body.getAttribute('data-theme') || 'dark';
+    applyTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]);
+}
+
 var SEED_DATA = [
     // 지하1층
     { name: '황승호',       ext: '308', phone: '2123-8348', floorId: 'floor_b1' },
@@ -163,14 +181,18 @@ var ContactDB = {
         try {
             var res  = await fetch('/api/data');
             var data = res.ok ? await res.json() : null;
-            if (data && data.contacts) {
+            if (data && data.contacts && Object.keys(data.contacts).length > 0) {
+                // KV에 실제 데이터가 있을 때만 사용 (빈 KV로 로컬 데이터 덮어쓰기 방지)
                 this._data = {
-                    contacts: data.contacts || {},
+                    contacts: data.contacts,
                     rooms:    data.rooms    || {},
                     settings: data.settings || { admin_password: DEFAULT_PASSWORD }
                 };
                 // 오프라인 대비 로컬 캐시 갱신
                 localStorage.setItem('extension_data_v4', JSON.stringify(this._data));
+            } else if (data) {
+                // KV가 비어있는 경우 → 로컬 캐시 우선 사용 (재배포 후 데이터 보호)
+                throw new Error('KV 빈 데이터, 로컬 캐시 확인');
             } else {
                 throw new Error('서버 응답 없음');
             }
@@ -285,8 +307,8 @@ var Renderer = {
 
             if (floorContacts.length === 0 && floorRooms.length === 0 && !isAdmin) return;
 
-            html += '<section class="floor-section" data-floor-id="' + floor.id + '">';
-            html += '<div class="floor-header" style="border-left-color:' + floor.color + '">';
+            html += '<section class="floor-section" data-floor-id="' + floor.id + '" style="--fc:' + floor.color + '">';
+            html += '<div class="floor-header">';
             html += '<span class="floor-name">' + escHtml(floor.name) + '</span>';
             html += '<span class="floor-count">' + floorContacts.length + '명</span>';
             if (isAdmin) {
@@ -359,11 +381,17 @@ var App = {
             this._adminPassword = data.password;
 
             if (Object.keys(this.state.contacts).length === 0) {
-                await ContactDB.seed();
+                // localStorage에도 데이터가 없을 때만 시드 실행 (재배포 후 데이터 손실 방지)
+                var _local = localStorage.getItem('extension_data_v4');
+                var _localContacts = _local ? (JSON.parse(_local).contacts || {}) : {};
+                if (Object.keys(_localContacts).length === 0) {
+                    await ContactDB.seed();
+                }
             }
 
             if (sessionStorage.getItem('ext_admin') === 'true') this.state.isAdmin = true;
 
+            initTheme();
             this.bindEvents();
             this.updateFloorFilter();
             Renderer.render();
@@ -408,6 +436,9 @@ var App = {
             self.state.filterFloor = e.target.value;
             Renderer.render();
         });
+
+        // 테마 버튼
+        document.getElementById('themeBtn').addEventListener('click', function() { cycleTheme(); });
 
         // 새로고침
         document.getElementById('refreshBtn').addEventListener('click', async function() {

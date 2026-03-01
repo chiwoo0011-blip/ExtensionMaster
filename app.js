@@ -303,7 +303,7 @@ function renderCard(c, isAdmin) {
     var h = '<div class="contact-card' + (isAdmin ? ' is-admin' : '') + '" data-id="' + c.id + '">';
     if (!isAdmin) {
         var fav = Favorites.has(c.id);
-        h += '<button class="cc-fav-btn' + (fav ? ' active' : '') + '" data-id="' + c.id + '">'
+        h += '<button class="cc-fav-btn' + (fav ? ' active' : '') + '" data-id="' + c.id + '" title="즐겨찾기 추가/제거">'
            + (fav ? '★' : '☆') + '</button>';
     }
     if (c.role)    h += '<div class="cc-role">' + escHtml(c.role) + '</div>';

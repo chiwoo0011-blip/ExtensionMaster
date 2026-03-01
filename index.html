@@ -49,11 +49,39 @@
     <div class="header-controls">
         <input type="text" id="searchInput" class="search-input" placeholder="이름 / 번호 검색" autocomplete="off">
         <select id="filterFloor" class="filter-select"></select>
+        <div class="ctrl-break"></div>
+        <button class="btn" id="themeBtn">🌙 다크</button>
         <select id="printFloorSel" class="filter-select"></select>
         <button class="btn" id="printBtn" title="인쇄" style="padding:0.35rem 0.6rem;">&#128424; 인쇄</button>
-        <button class="btn" id="themeBtn">🌙 다크</button>
-        <button class="btn" id="refreshBtn" title="새로고침" style="padding:0.35rem 0.6rem;">&#8635;</button>
+        <button class="btn" id="refreshBtn" title="새로고침" style="padding:0.35rem 0.6rem;">&#8635; 새로고침</button>
         <button class="btn" id="adminBtn">관리자</button>
+        <div class="help-wrap">
+            <button class="btn help-btn" title="사용법">?</button>
+            <div class="help-tooltip">
+                <div class="help-tip-title">&#9432; 앱 사용법</div>
+                <div class="help-item">
+                    <span class="help-num">1</span>
+                    <div>
+                        <strong>&#9733; 즐겨찾기</strong>
+                        <p>카드 우상단 ☆ 클릭으로 즐겨찾기 등록/해제. 층 필터에서 ★ 즐겨찾기 선택 시 모아보기.</p>
+                    </div>
+                </div>
+                <div class="help-item">
+                    <span class="help-num">2</span>
+                    <div>
+                        <strong>&#128222; 전화걸기</strong>
+                        <p>카드의 직통번호 또는 내선번호를 클릭하면 전화 앱으로 바로 연결됩니다.</p>
+                    </div>
+                </div>
+                <div class="help-item">
+                    <span class="help-num">3</span>
+                    <div>
+                        <strong>&#128424; 인쇄하기</strong>
+                        <p>인쇄 드롭다운에서 층 선택 후 인쇄 버튼 클릭. 전체 선택 시 전층 인쇄.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </header>
 

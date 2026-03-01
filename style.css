@@ -699,6 +699,27 @@ footer {
 .help-item strong { display: block; color: var(--text); margin-bottom: 0.2rem; }
 .help-item p { margin: 0; color: var(--text-muted); }
 
+/* ===== 즐겨찾기 크게보기 ===== */
+.fav-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.fav-card {
+    padding: 1rem 1.1rem 0.9rem;
+}
+.fav-card .cc-role  { font-size: 0.85rem; }
+.fav-card .cc-name  { font-size: 1.28rem; }
+.fav-card .cc-ext   { font-size: 1.0rem; }
+.fav-card .cc-phone { font-size: 0.95rem; }
+
+.cc-location {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 0.45rem;
+    padding-top: 0.35rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    letter-spacing: 0.01em;
+}
+
 /* ===== Print Layout (화면에서 숨김) ===== */
 #printLayout { display: none; }
 
@@ -797,4 +818,11 @@ footer {
     .brand-title  { font-size: 0.88rem; }
     .school-info-bar { font-size: 0.76rem; padding: 0.4rem 0.9rem; }
     .admin-banner    { padding: 0.3rem 0.75rem; font-size: 0.7rem; }
+
+    /* 즐겨찾기 크게보기 모바일 오버라이드 */
+    .fav-grid { grid-template-columns: repeat(2, 1fr); gap: 0.45rem; }
+    .fav-card { padding: 0.85rem 0.9rem; line-height: 1.5; }
+    .fav-card .cc-name  { font-size: 1.1rem; }
+    .fav-card .cc-ext   { font-size: 0.9rem; }
+    .fav-card .cc-phone { font-size: 0.85rem; }
 }

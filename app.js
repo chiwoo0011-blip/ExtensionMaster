@@ -298,9 +298,9 @@ var ContactDB = {
 
 
 // ===== 카드 렌더 헬퍼 =====
-function renderCard(c, isAdmin) {
+function renderCard(c, isAdmin, showLocation) {
     var s = ContactDB._data.settings || {};
-    var h = '<div class="contact-card' + (isAdmin ? ' is-admin' : '') + '" data-id="' + c.id + '">';
+    var h = '<div class="contact-card' + (isAdmin ? ' is-admin' : '') + (showLocation ? ' fav-card' : '') + '" data-id="' + c.id + '">';
     if (!isAdmin) {
         var fav = Favorites.has(c.id);
         h += '<button class="cc-fav-btn' + (fav ? ' active' : '') + '" data-id="' + c.id + '" title="즐겨찾기 추가/제거">'
@@ -317,6 +317,13 @@ function renderCard(c, isAdmin) {
         h += '<a class="cc-phone" href="tel:' + toDialNum(c.phone, s.areaCode || '02') + '">' + escHtml(c.phone) + '</a>';
     }
     if (c.address) h += '<div class="cc-address">' + escHtml(c.address) + '</div>';
+    if (showLocation) {
+        var floor = FLOORS.find(function(f) { return f.id === c.floorId; });
+        var room  = c.roomId ? App.state.rooms[c.roomId] : null;
+        var loc   = floor ? floor.name : '';
+        if (room && room.name) loc += (loc ? ' \u00b7 ' : '') + room.name;
+        if (loc) h += '<div class="cc-location">&#128205; ' + escHtml(loc) + '</div>';
+    }
     if (isAdmin)   h += '<button class="cc-edit-btn" data-id="' + c.id + '" title="편집">✎</button>';
     h += '</div>';
     return h;
@@ -342,8 +349,8 @@ var Renderer = {
                 html += '<div class="floor-header">';
                 html += '<span class="floor-name">★ 즐겨찾기</span>';
                 html += '<span class="floor-count">' + allFavContacts.length + '명</span>';
-                html += '</div><div class="contact-grid">';
-                allFavContacts.forEach(function(c) { html += renderCard(c, false); });
+                html += '</div><div class="contact-grid fav-grid">';
+                allFavContacts.forEach(function(c) { html += renderCard(c, false, true); });
                 html += '</div></section>';
             } else {
                 html = '<div class="cc-empty" style="padding:2rem;">즐겨찾기가 없습니다. 카드의 ☆ 버튼을 눌러 추가하세요.</div>';
@@ -367,8 +374,8 @@ var Renderer = {
                     html += '<div class="floor-header">';
                     html += '<span class="floor-name">★ 즐겨찾기</span>';
                     html += '<span class="floor-count">' + topFavContacts.length + '명</span>';
-                    html += '</div><div class="contact-grid">';
-                    topFavContacts.forEach(function(c) { html += renderCard(c, false); });
+                    html += '</div><div class="contact-grid fav-grid">';
+                    topFavContacts.forEach(function(c) { html += renderCard(c, false, true); });
                     html += '</div></section>';
                 }
             }

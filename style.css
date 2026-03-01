@@ -555,9 +555,32 @@ footer {
 
 /* ===== Responsive ===== */
 @media (max-width: 640px) {
-    .canvas { padding: 0.75rem 0.75rem 9rem; }
-    .contact-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); gap: 0.55rem; padding: 0.65rem; }
-    .app-header { padding: 0.5rem 0.75rem; }
-    .search-input { width: 130px; }
-    .brand-title { font-size: 0.9rem; }
+    .canvas { padding: 0.75rem 0.5rem 9rem; }
+
+    /* 2열 고정 그리드 */
+    .contact-grid { grid-template-columns: repeat(2, 1fr); gap: 0.4rem; padding: 0.5rem; }
+
+    /* 카드 컴팩트 */
+    .contact-card { padding: 0.5rem 0.6rem; line-height: 1.4; }
+    .cc-name    { font-size: 0.9rem; }
+    .cc-role    { font-size: 0.68rem; }
+    .cc-ext     { font-size: 0.84rem; }
+    .cc-phone   { font-size: 0.78rem; }
+    .cc-address { font-size: 0.7rem; }
+
+    /* 방 헤더 컴팩트 */
+    .room-section { margin: 0 0.4rem 0.4rem; }
+    .room-header  { padding: 0.35rem 0.55rem; gap: 0.3rem 0.5rem; }
+    .room-name    { font-size: 0.85rem; }
+    .room-phone, .room-phone2 { font-size: 0.82rem; }
+    .room-fax   { font-size: 0.76rem; }
+
+    /* 층 헤더 컴팩트 */
+    .floor-header { padding: 0.35rem 0.75rem; }
+
+    .app-header  { padding: 0.45rem 0.75rem; }
+    .search-input { width: 120px; }
+    .brand-title  { font-size: 0.88rem; }
+    .school-info-bar { font-size: 0.76rem; padding: 0.4rem 0.9rem; }
+    .admin-banner    { padding: 0.3rem 0.75rem; font-size: 0.7rem; }
 }

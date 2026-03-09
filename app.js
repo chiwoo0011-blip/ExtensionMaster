@@ -295,7 +295,8 @@ var ContactDB = {
         return {
             contacts: this._data.contacts,
             rooms: this._data.rooms,
-            password: (this._data.settings && this._data.settings.admin_password) || DEFAULT_PASSWORD
+            password: (this._data.settings && this._data.settings.admin_password) || DEFAULT_PASSWORD,
+            serverOk: !!data
         };
     },
 
@@ -536,9 +537,10 @@ var App = {
 
             if (Object.keys(this.state.contacts).length === 0) {
                 // localStorage에도 데이터가 없을 때만 시드 실행 (재배포 후 데이터 손실 방지)
+                // 서버 연결 실패 시에는 seed를 건너뛰어 불필요한 저장 시도 방지
                 var _local = localStorage.getItem('extension_data_v4');
                 var _localContacts = _local ? (JSON.parse(_local).contacts || {}) : {};
-                if (Object.keys(_localContacts).length === 0) {
+                if (Object.keys(_localContacts).length === 0 && data.serverOk) {
                     await ContactDB.seed();
                 }
             }

@@ -78,7 +78,10 @@ export default async function handler(req, res) {
             });
         } catch (e) {
             console.error('[data.js] GET 오류:', e);
-            return res.status(500).json({ error: '데이터 조회 실패' });
+            const msg = e.message?.includes('UPSTASH') || e.message?.includes('Environment')
+                ? '데이터베이스 연결 실패 (환경변수 확인 필요)'
+                : '데이터 조회 실패';
+            return res.status(500).json({ error: msg });
         }
     }
 
@@ -136,7 +139,10 @@ export default async function handler(req, res) {
 
         } catch (e) {
             console.error('[data.js] POST 오류:', e);
-            return res.status(500).json({ error: '데이터 저장 실패' });
+            const msg = e.message?.includes('UPSTASH') || e.message?.includes('Environment')
+                ? '데이터베이스 연결 실패 (환경변수 확인 필요)'
+                : '데이터 저장 실패';
+            return res.status(500).json({ error: msg });
         }
     }
 

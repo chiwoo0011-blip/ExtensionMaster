@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/data.js": {
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/data", "destination": "/api/data" }
+  ],
   "headers": [
     {
       "source": "/(.*)\\.html",

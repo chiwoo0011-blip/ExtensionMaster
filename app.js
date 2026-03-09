@@ -277,7 +277,12 @@ var ContactDB = {
                         settings: cached.settings || { admin_password: DEFAULT_PASSWORD }
                     };
                 }
-                // 최초 배포 시, 덮어쓰지 않고 seed 호출을 위해 넘어감
+                // 서버 응답이 있으면 admin_password는 서버 것을 우선 사용 (비밀번호 동기화)
+                if (data && data.settings && data.settings.admin_password) {
+                    this._data.settings = Object.assign({}, this._data.settings, {
+                        admin_password: data.settings.admin_password
+                    });
+                }
             }
         } catch (e) {
             console.warn('[ContactDB] fetchAll 오류:', e.message);

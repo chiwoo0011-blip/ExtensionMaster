@@ -265,28 +265,26 @@ var ContactDB = {
                 };
                 this._audit = data.audit || []; // #15: 변경이력 캐시
                 localStorage.setItem('extension_data_v4', JSON.stringify(this._data));
-            } else if (data) {
-                // KV가 비어있는 경우 → 로컬 캐시 우선 사용 (재배포 후 데이터 보호)
-                throw new Error('KV 빈 데이터, 로컬 캐시 확인');
             } else {
-                throw new Error('서버 응답 없음');
+                // KV가 비어있거나 응답이 없는 경우 (최초 배포 또는 네트워크 오류)
+                console.warn('[ContactDB] 서버 데이터 비활성, 로컬 캐시 확인');
+                var stored = localStorage.getItem('extension_data_v4');
+                if (stored) {
+                    var cached = JSON.parse(stored);
+                    this._data = {
+                        contacts: cached.contacts || {},
+                        rooms: cached.rooms || {},
+                        settings: cached.settings || { admin_password: DEFAULT_PASSWORD }
+                    };
+                }
+                // 최초 배포 시, 덮어쓰지 않고 seed 호출을 위해 넘어감
             }
         } catch (e) {
-            console.warn('[ContactDB] 서버 접속 실패, 로컬 캐시 사용:', e.message);
-            var stored = localStorage.getItem('extension_data_v4');
-            if (stored) {
-                var cached = JSON.parse(stored);
-                this._data = {
-                    contacts: cached.contacts || {},
-                    rooms: cached.rooms || {},
-                    settings: cached.settings || { admin_password: DEFAULT_PASSWORD }
-                };
-            }
+            console.warn('[ContactDB] fetchAll 오류:', e.message);
         }
         return {
             contacts: this._data.contacts,
             rooms: this._data.rooms,
-            // 오프라인 캐시에 평문 비밀번호가 있을 경우에도 안전하게 반환
             password: (this._data.settings && this._data.settings.admin_password) || DEFAULT_PASSWORD
         };
     },

@@ -1,5 +1,8 @@
-// ===== ExtensionMaster - Vercel KV API v2 =====
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+// @upstash/redis는 수동 초기화가 필요할 수 있으나,
+// Vercel 환경변수(KV_REST_API_URL, KV_REST_API_TOKEN)를 자동으로 인식하는 정적 메서드 제공
+const kv = Redis.fromEnv();
 import crypto from 'crypto';
 
 // ── 키 상수 ──────────────────────────────────────────────────────────

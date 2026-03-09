@@ -11,8 +11,8 @@ const AUDIT_KEY = 'em_audit_v5';          // #15: 변경이력
 const RATE_PREFIX = 'em_rate:';
 
 const DEFAULT_PASSWORD = '1234';
-const MAX_ATTEMPTS = 5;
-const BLOCK_TTL = 900;    // 15분
+const MAX_ATTEMPTS = 15;  // Vercel 네트워크 재시도 대비 완화 (5 -> 15)
+const BLOCK_TTL = 300;    // 5분 (900 -> 300)
 const AUDIT_MAX = 20;     // 최대 보관 이력 수
 
 // ── 보안 유틸 ─────────────────────────────────────────────────────────

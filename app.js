@@ -17,6 +17,7 @@ function uid() {
 
 // #6: 브라우저 SHA-256 (Web Crypto API)
 async function sha256Browser(str) {
+    if (typeof crypto === 'undefined' || !crypto.subtle) return str; // 로컬 http 등 비보안 환경용 평문 폴백
     var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
     return Array.from(new Uint8Array(buf)).map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
 }
@@ -210,8 +211,15 @@ var ContactDB = {
                 settings: this._data.settings
             };
             localStorage.setItem('extension_data_v4', JSON.stringify(payload));
+
+            // 로컬 파일 실행 시에는 Vercel API가 없으므로 fetch를 생략
+            if (window.location.protocol === 'file:') {
+                App.hideSaveFailBanner();
+                return;
+            }
+
             var ctrl = new AbortController();
-            var tid = setTimeout(function () { ctrl.abort(); }, 8000);
+            var tid = setTimeout(function () { ctrl.abort(); }, 15000);
             var res;
             try {
                 res = await fetch('/api/data', {

@@ -198,6 +198,7 @@ var ContactDB = {
         rooms: {},
         settings: { admin_password: DEFAULT_PASSWORD }
     },
+    _authPassword: DEFAULT_PASSWORD,  // 서버에 저장된 현재 비밀번호 (인증용)
     _saving: false,
     _pendingSave: false,
 
@@ -226,7 +227,7 @@ var ContactDB = {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(Object.assign({}, payload, {
-                        adminPassword: this._data.settings.admin_password,
+                        adminPassword: this._authPassword,  // 서버에 저장된 현재 비밀번호로 인증
                         auditEntry: auditEntry || null   // #15: 변경이력
                     })),
                     signal: ctrl.signal
@@ -238,6 +239,8 @@ var ContactDB = {
                 var err = await res.json().catch(function () { return {}; });
                 throw new Error(err.error || '저장 실패 (' + res.status + ')');
             }
+            // 저장 성공 후 인증 비밀번호를 새 비밀번호로 갱신
+            this._authPassword = this._data.settings.admin_password;
             App.hideSaveFailBanner();
         } catch (e) {
             console.error('[ContactDB] 저장 오류:', e);
@@ -284,6 +287,8 @@ var ContactDB = {
                     });
                 }
             }
+            // 서버에서 받은 비밀번호를 인증용으로 설정
+            this._authPassword = this._data.settings.admin_password || DEFAULT_PASSWORD;
         } catch (e) {
             console.warn('[ContactDB] fetchAll 오류:', e.message);
         }

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>앱 설치 안내 - 연세대학교재활학교 내선번호안내</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Malgun Gothic', sans-serif; background: #0f172a; color: #e2e8f0; line-height: 1.7; }
+.container { max-width: 680px; margin: 0 auto; padding: 1.5rem; }
+h1 { font-size: 1.4rem; text-align: center; margin-bottom: 0.3rem; color: #fff; }
+.subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 2rem; }
+.tab-bar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: center; }
+.tab-btn { padding: 0.5rem 1.2rem; border: 2px solid #334155; border-radius: 8px; background: transparent; color: #94a3b8; font-size: 0.9rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.tab-btn.active { background: #6366f1; border-color: #6366f1; color: #fff; }
+.tab-btn:hover { border-color: #6366f1; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.section { margin-bottom: 2rem; }
+.section-title { font-size: 1.1rem; font-weight: 700; color: #a5b4fc; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+.step { background: #1e293b; border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; border-left: 4px solid #6366f1; }
+.step-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; background: #6366f1; color: #fff; border-radius: 50%; font-size: 0.85rem; font-weight: 700; margin-right: 0.5rem; flex-shrink: 0; }
+.step-title { font-weight: 700; color: #fff; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; align-items: center; }
+.step-desc { color: #cbd5e1; font-size: 0.85rem; padding-left: 2.3rem; }
+/* Visual mockups */
+.mockup { background: #0f172a; border: 2px solid #334155; border-radius: 10px; margin: 0.8rem 0 0.3rem 2.3rem; padding: 0.8rem; max-width: 350px; }
+.mockup-bar { background: #1e293b; border-radius: 6px; padding: 0.4rem 0.6rem; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; font-size: 0.75rem; color: #94a3b8; }
+.mockup-url { background: #0f172a; border-radius: 4px; padding: 0.2rem 0.5rem; flex: 1; font-size: 0.7rem; color: #64748b; }
+.mockup-icon { width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; }
+.highlight-box { border: 2px dashed #f59e0b; border-radius: 6px; padding: 0.3rem 0.6rem; display: inline-flex; align-items: center; gap: 0.3rem; color: #fbbf24; font-size: 0.8rem; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { border-color: #f59e0b; } 50% { border-color: #f59e0b55; } }
+.arrow { color: #f59e0b; font-size: 1.2rem; margin: 0.3rem 0 0.3rem 2.3rem; }
+.mockup-menu { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 0.5rem 0; margin: 0.5rem 0 0 2.3rem; max-width: 250px; }
+.mockup-menu-item { padding: 0.4rem 1rem; font-size: 0.8rem; color: #cbd5e1; display: flex; align-items: center; gap: 0.5rem; }
+.mockup-menu-item.highlight { background: #6366f122; color: #a5b4fc; font-weight: 700; }
+.mockup-phone { background: #000; border-radius: 20px; padding: 8px; max-width: 220px; margin: 0.8rem 0 0.3rem 2.3rem; border: 2px solid #334155; }
+.mockup-phone-screen { background: #1e293b; border-radius: 14px; padding: 0.6rem; min-height: 120px; }
+.mockup-phone-bar { display: flex; justify-content: center; padding: 0.3rem; }
+.mockup-phone-notch { width: 60px; height: 6px; background: #334155; border-radius: 3px; }
+.phone-bottom-bar { display: flex; justify-content: space-around; padding: 0.5rem; margin-top: 0.5rem; border-top: 1px solid #334155; }
+.phone-bottom-btn { font-size: 1.2rem; color: #64748b; }
+.phone-share-btn { font-size: 1.2rem; color: #3b82f6; }
+.tip { background: #1e3a5f; border-radius: 8px; padding: 0.8rem 1rem; margin-top: 1rem; font-size: 0.82rem; color: #93c5fd; display: flex; align-items: flex-start; gap: 0.5rem; }
+.tip-icon { font-size: 1.1rem; flex-shrink: 0; }
+.back-link { display: block; text-align: center; margin-top: 2rem; color: #6366f1; text-decoration: none; font-size: 0.9rem; padding: 0.6rem; border: 1px solid #6366f1; border-radius: 8px; }
+.back-link:hover { background: #6366f122; }
+/* Phone home screen mockup */
+.home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; padding: 0.5rem; }
+.home-icon { text-align: center; font-size: 0.6rem; color: #94a3b8; }
+.home-icon-img { width: 36px; height: 36px; border-radius: 8px; margin: 0 auto 2px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.home-icon-new .home-icon-img { background: #6366f1; border: 2px solid #fbbf24; }
+.home-icon-other .home-icon-img { background: #334155; }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>앱 설치 안내</h1>
+    <p class="subtitle">연세대학교재활학교 내선번호안내를 앱처럼 사용하세요</p>
+
+    <div class="tab-bar">
+        <button class="tab-btn active" onclick="showTab('pc')">PC (크롬)</button>
+        <button class="tab-btn" onclick="showTab('android')">Android</button>
+        <button class="tab-btn" onclick="showTab('ios')">iPhone / iPad</button>
+    </div>
+
+    <!-- ===== PC 크롬 ===== -->
+    <div id="tab-pc" class="tab-content active">
+        <div class="section">
+            <div class="section-title">PC에서 앱으로 설치하기 (Chrome)</div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">1</span> 사이트 접속</div>
+                <div class="step-desc">Chrome 브라우저에서 내선번호안내 사이트에 접속합니다.</div>
+                <div class="mockup">
+                    <div class="mockup-bar">
+                        <span style="color:#64748b">🔒</span>
+                        <div class="mockup-url">extension-master.vercel.app</div>
+                        <span class="mockup-icon">☆</span>
+                        <span class="highlight-box">⬇ 설치</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">2</span> 설치 버튼 클릭</div>
+                <div class="step-desc">주소창 오른쪽에 <strong style="color:#fbbf24">⬇ 설치 아이콘</strong> 또는 <strong style="color:#fbbf24">모니터+화살표(⊞) 아이콘</strong>이 나타납니다. 클릭하세요.</div>
+                <div class="arrow">↓</div>
+                <div class="step-desc">또는 Chrome 메뉴(⋮) → <strong>"앱 설치..."</strong>를 선택합니다.</div>
+                <div class="mockup-menu">
+                    <div class="mockup-menu-item">새 탭</div>
+                    <div class="mockup-menu-item">새 창</div>
+                    <div class="mockup-menu-item">───────────</div>
+                    <div class="mockup-menu-item">북마크</div>
+                    <div class="mockup-menu-item highlight">📲 앱 설치...</div>
+                    <div class="mockup-menu-item">설정</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">3</span> 설치 확인</div>
+                <div class="step-desc">"앱을 설치하시겠습니까?" 팝업이 나타나면 <strong style="color:#6366f1">"설치"</strong> 버튼을 클릭합니다.</div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">4</span> 완료!</div>
+                <div class="step-desc">바탕화면과 작업표시줄에 앱 아이콘이 생깁니다. 독립 창으로 실행됩니다.</div>
+            </div>
+
+            <div class="tip">
+                <span class="tip-icon">💡</span>
+                <span>설치 아이콘이 안 보인다면: 주소창에 <strong>chrome://apps</strong> 입력 후 해당 앱을 찾아 실행할 수 있습니다.</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Android ===== -->
+    <div id="tab-android" class="tab-content">
+        <div class="section">
+            <div class="section-title">Android 홈화면에 추가하기 (Chrome)</div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">1</span> Chrome에서 사이트 접속</div>
+                <div class="step-desc">Chrome 앱에서 내선번호안내 사이트에 접속합니다.</div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">2</span> 메뉴 열기</div>
+                <div class="step-desc">화면 오른쪽 상단의 <strong style="color:#fbbf24">⋮ (점 3개)</strong> 메뉴를 탭합니다.</div>
+                <div class="mockup-phone">
+                    <div class="mockup-phone-bar"><div class="mockup-phone-notch"></div></div>
+                    <div class="mockup-phone-screen">
+                        <div class="mockup-bar" style="margin:0;font-size:0.65rem;">
+                            <span style="color:#64748b">🔒</span>
+                            <div class="mockup-url" style="font-size:0.6rem;">extension-master.vercel.app</div>
+                            <span class="highlight-box" style="font-size:0.7rem;padding:0.15rem 0.3rem;">⋮</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">3</span> "홈 화면에 추가" 선택</div>
+                <div class="step-desc">메뉴에서 <strong style="color:#fbbf24">"홈 화면에 추가"</strong> 또는 <strong style="color:#fbbf24">"앱 설치"</strong>를 탭합니다.</div>
+                <div class="mockup-menu">
+                    <div class="mockup-menu-item">새 탭</div>
+                    <div class="mockup-menu-item">북마크</div>
+                    <div class="mockup-menu-item">공유...</div>
+                    <div class="mockup-menu-item highlight">📲 홈 화면에 추가</div>
+                    <div class="mockup-menu-item">데스크톱 사이트</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">4</span> 이름 확인 후 추가</div>
+                <div class="step-desc">"추가" 버튼을 탭합니다. 홈화면에 앱 아이콘이 생깁니다.</div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">5</span> 완료!</div>
+                <div class="step-desc">홈화면에서 앱처럼 바로 실행할 수 있습니다.</div>
+                <div class="mockup-phone">
+                    <div class="mockup-phone-bar"><div class="mockup-phone-notch"></div></div>
+                    <div class="mockup-phone-screen">
+                        <div class="home-grid">
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">📞</div>전화</div>
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">💬</div>메시지</div>
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">📷</div>카메라</div>
+                            <div class="home-icon home-icon-new"><div class="home-icon-img">EXT</div>내선번호</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip">
+                <span class="tip-icon">💡</span>
+                <span>Samsung Internet 브라우저도 동일합니다: 메뉴(≡) → "홈 화면에 추가"</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== iOS ===== -->
+    <div id="tab-ios" class="tab-content">
+        <div class="section">
+            <div class="section-title">iPhone / iPad 홈화면에 추가하기 (Safari)</div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">1</span> Safari에서 사이트 접속</div>
+                <div class="step-desc"><strong style="color:#f87171">반드시 Safari</strong>를 사용하세요. Chrome/다른 브라우저에서는 홈화면 추가가 안 됩니다.</div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">2</span> 공유 버튼 탭</div>
+                <div class="step-desc">화면 하단의 <strong style="color:#fbbf24">공유 버튼 (⬆ 네모+화살표)</strong>을 탭합니다.</div>
+                <div class="mockup-phone">
+                    <div class="mockup-phone-bar"><div class="mockup-phone-notch"></div></div>
+                    <div class="mockup-phone-screen" style="min-height:80px;">
+                        <div style="text-align:center;color:#64748b;font-size:0.7rem;padding:1rem 0;">extension-master.vercel.app</div>
+                    </div>
+                    <div class="phone-bottom-bar">
+                        <span class="phone-bottom-btn">◁</span>
+                        <span class="phone-bottom-btn">▷</span>
+                        <span class="highlight-box" style="font-size:0.9rem;padding:0.15rem 0.4rem;">⬆</span>
+                        <span class="phone-bottom-btn">☐</span>
+                        <span class="phone-bottom-btn">⊞</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">3</span> "홈 화면에 추가" 선택</div>
+                <div class="step-desc">공유 메뉴를 위로 스크롤하여 <strong style="color:#fbbf24">"홈 화면에 추가"</strong>를 탭합니다.</div>
+                <div class="mockup-menu">
+                    <div class="mockup-menu-item">메시지</div>
+                    <div class="mockup-menu-item">메일</div>
+                    <div class="mockup-menu-item">───────────</div>
+                    <div class="mockup-menu-item">즐겨찾기에 추가</div>
+                    <div class="mockup-menu-item highlight">➕ 홈 화면에 추가</div>
+                    <div class="mockup-menu-item">읽기 목록에 추가</div>
+                </div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">4</span> 이름 확인 후 추가</div>
+                <div class="step-desc">오른쪽 상단의 <strong style="color:#6366f1">"추가"</strong>를 탭합니다.</div>
+            </div>
+
+            <div class="step">
+                <div class="step-title"><span class="step-num">5</span> 완료!</div>
+                <div class="step-desc">홈화면에서 앱처럼 전체화면으로 실행됩니다.</div>
+                <div class="mockup-phone">
+                    <div class="mockup-phone-bar"><div class="mockup-phone-notch"></div></div>
+                    <div class="mockup-phone-screen">
+                        <div class="home-grid">
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">📞</div>전화</div>
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">💬</div>메시지</div>
+                            <div class="home-icon home-icon-other"><div class="home-icon-img">📷</div>카메라</div>
+                            <div class="home-icon home-icon-new"><div class="home-icon-img">EXT</div>내선번호</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tip">
+                <span class="tip-icon">⚠️</span>
+                <span>iOS에서는 <strong>반드시 Safari</strong>를 사용해야 합니다. Chrome, Edge 등에서는 "홈 화면에 추가" 옵션이 나타나지 않습니다.</span>
+            </div>
+        </div>
+    </div>
+
+    <a href="/" class="back-link">← 내선번호안내로 돌아가기</a>
+</div>
+
+<script>
+function showTab(name) {
+    document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+    document.querySelectorAll('.tab-btn').forEach(function(el) { el.classList.remove('active'); });
+    document.getElementById('tab-' + name).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

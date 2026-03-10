@@ -1326,5 +1326,47 @@ var App = {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    App.init();
+    App.init().then(function () {
+        // ── 자동 새로고침 (5분 주기, 안전 조건 충족 시에만 실행) ──
+        var POLL_INTERVAL = 5 * 60 * 1000; // 5분
+        var MODAL_IDS = ['contactModal', 'roomModal', 'auditModal', 'dateModal', 'settingsModal'];
+
+        function isSafeToRefresh() {
+            // 관리자 모드 중이면 건너뜀 (편집 위험)
+            if (App.state.isAdmin) return false;
+            // 저장 중이거나 대기 중이면 건너뜀
+            if (ContactDB._saving || ContactDB._pendingSave) return false;
+            // 모달이 열려있으면 건너뜀
+            for (var i = 0; i < MODAL_IDS.length; i++) {
+                var el = document.getElementById(MODAL_IDS[i]);
+                if (el && !el.classList.contains('hidden')) return false;
+            }
+            // 로그인 화면이 보이면 건너뜀
+            var loginEl = document.getElementById('loginScreen');
+            if (loginEl && !loginEl.classList.contains('hidden')) return false;
+            // 저장실패 배너가 표시 중이면 건너뜀 (style.display 사용)
+            var banner = document.getElementById('saveFailBanner');
+            if (banner && banner.style.display !== 'none') return false;
+            return true;
+        }
+
+        setInterval(async function () {
+            if (!isSafeToRefresh()) return;
+            try {
+                var prev = JSON.stringify({ c: ContactDB._data.contacts, r: ContactDB._data.rooms });
+                var data = await ContactDB.fetchAll();
+                var next = JSON.stringify({ c: ContactDB._data.contacts, r: ContactDB._data.rooms });
+                // 데이터가 실제로 변경된 경우에만 화면 갱신 (로딩 오버레이 없이)
+                if (prev !== next) {
+                    App.state.contacts = data.contacts;
+                    App.state.rooms = data.rooms;
+                    Renderer.render();
+                    App.updateStatInfo();
+                    App.showToast('데이터가 업데이트되었습니다.', 'info');
+                }
+            } catch (e) {
+                // 폴링 실패는 조용히 무시 (배너 표시 안 함)
+            }
+        }, POLL_INTERVAL);
+    });
 });

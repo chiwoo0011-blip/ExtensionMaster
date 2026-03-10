@@ -891,7 +891,7 @@ var App = {
         // saveFailBanner 표시 여부로 성공/실패를 판단
         await ContactDB._save();
         var failBanner = document.getElementById('saveFailBanner');
-        if (failBanner && !failBanner.classList.contains('hidden')) {
+        if (failBanner && failBanner.style.display !== 'none') {
             // 저장 실패 → 버튼 복구하고 중단
             if (btn) { btn.disabled = false; btn.textContent = '저장후나감'; }
             return;
@@ -1304,12 +1304,12 @@ var App = {
         var banner = document.getElementById('saveFailBanner');
         var msgEl = document.getElementById('saveFailMsg');
         if (msgEl) msgEl.textContent = '저장 실패: ' + (msg || '네트워크 오류');
-        if (banner) banner.classList.remove('hidden');
+        if (banner) banner.style.display = 'flex';
     },
 
     hideSaveFailBanner: function () {
         var banner = document.getElementById('saveFailBanner');
-        if (banner) banner.classList.add('hidden');
+        if (banner) banner.style.display = 'none';
     },
 
     retrySave: async function () {

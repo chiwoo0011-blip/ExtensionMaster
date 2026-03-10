@@ -235,8 +235,8 @@
     <div id="searchResults" class="search-results hidden"></div>
 
     <!-- ===== 저장 실패 재시도 배너 (하단 고정) ===== -->
-    <div id="saveFailBanner" class="hidden"
-        style="position:fixed;bottom:48px;left:0;right:0;z-index:910;background:#dc2626;color:#fff;padding:0.55rem 1rem;display:flex;align-items:center;justify-content:space-between;font-size:0.83rem;gap:1rem;box-shadow:0 -2px 8px rgba(0,0,0,0.3);">
+    <div id="saveFailBanner"
+        style="position:fixed;bottom:48px;left:0;right:0;z-index:910;background:#dc2626;color:#fff;padding:0.55rem 1rem;display:none;align-items:center;justify-content:space-between;font-size:0.83rem;gap:1rem;box-shadow:0 -2px 8px rgba(0,0,0,0.3);">
         <span id="saveFailMsg">저장 실패: 네트워크 오류</span>
         <div style="display:flex;gap:0.4rem;flex-shrink:0;">
             <button id="saveRetryBtn" onclick="App.retrySave()"

@@ -887,20 +887,31 @@ var App = {
     _logoutAdmin: async function () {
         var btn = document.getElementById('adminLogout');
         if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
-        // _save()는 내부 catch에서 오류를 처리하고 throw하지 않으므로
-        // saveFailBanner 표시 여부로 성공/실패를 판단
-        await ContactDB._save();
-        var failBanner = document.getElementById('saveFailBanner');
-        if (failBanner && failBanner.style.display !== 'none') {
-            // 저장 실패 → 버튼 복구하고 중단
+        try {
+            // 이전 저장이 진행 중이면 완료될 때까지 대기 (레이스 컨디션 방지)
+            var waitCount = 0;
+            while (ContactDB._saving || ContactDB._pendingSave) {
+                await new Promise(function (r) { setTimeout(r, 200); });
+                waitCount++;
+                if (waitCount > 75) break; // 최대 15초 대기 후 강제 탈출
+            }
+            // _save()는 내부 catch에서 오류를 처리하고 throw하지 않으므로
+            // saveFailBanner 표시 여부로 성공/실패를 판단
+            await ContactDB._save();
+            var failBanner = document.getElementById('saveFailBanner');
+            if (failBanner && failBanner.style.display !== 'none') {
+                // 저장 실패 → 종료 중단 (finally에서 버튼 복구)
+                return;
+            }
+            this.state.isAdmin = false;
+            sessionStorage.removeItem('ext_admin');
+            Renderer.render();
+            this.updateAdminUI();
+            this.showToast('저장 완료 · 관리자 모드 종료', 'success');
+        } finally {
+            // 성공/실패/예외 어떤 경우에도 버튼 상태를 항상 복구
             if (btn) { btn.disabled = false; btn.textContent = '저장후나감'; }
-            return;
         }
-        this.state.isAdmin = false;
-        sessionStorage.removeItem('ext_admin');
-        Renderer.render();
-        this.updateAdminUI();
-        this.showToast('저장 완료 · 관리자 모드 종료', 'success');
     },
 
     doLogin: async function () {

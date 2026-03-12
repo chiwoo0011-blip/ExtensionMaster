@@ -56,7 +56,18 @@
             <select id="printFloorSel" class="filter-select"></select>
             <button class="btn" id="printBtn" title="인쇄" style="padding:0.35rem 0.6rem;">&#128424; 인쇄</button>
             <button class="btn" id="refreshBtn" title="새로고침" style="padding:0.35rem 0.6rem;">&#8635; 새로고침</button>
-            <button class="btn" id="adminBtn">관리자</button>
+            <div class="settings-menu-wrap" id="settingsMenuWrap">
+                <button class="btn btn-primary" id="adminBtn" title="설정">⚙ 설정</button>
+                <div class="settings-dropdown hidden" id="settingsDropdown">
+                    <div class="sd-title">설정 메뉴</div>
+                    <button class="sd-item" id="sd-editMode">✎ 연락처 편집 모드</button>
+                    <button class="sd-item" id="sd-settings">⚙️ 앱 설정 (대표번호 등)</button>
+                    <button class="sd-item" id="sd-date">📅 업데이트 날짜 설정</button>
+                    <button class="sd-item" id="sd-csv">💾 CSV 내보내기</button>
+                    <button class="sd-item" id="sd-audit">📋 변경이력 보기</button>
+                    <button class="sd-item sd-danger" id="sd-clearAll">⚠ 전체 연락처 삭제</button>
+                </div>
+            </div>
             <div class="help-wrap">
                 <button class="btn help-btn" title="사용법">?</button>
                 <div class="help-tooltip">
@@ -255,20 +266,17 @@
     <!-- ===== 토스트 ===== -->
     <div id="toast" class="toast"></div>
 
-    <!-- ===== 관리자 배너 (하단 고정) ===== -->
+    <!-- ===== 편집 모드 배너 (하단 고정) ===== -->
     <div class="admin-banner hidden" id="adminBanner">
-        <span>&#9650; 관리자 모드 &nbsp;|&nbsp; 카드 더블클릭/✎=연락처 편집 &nbsp;|&nbsp; 방 헤더 ✎=방 편집 &nbsp;|&nbsp; 카드 드래그=순서변경</span>
+        <span>✎ 편집 모드 활성화 &nbsp;|&nbsp; 카드 더블클릭 또는 ✎ 버튼 = 연락처 편집 &nbsp;|&nbsp; 방 헤더 ✎ = 방 편집 &nbsp;|&nbsp; 카드 드래그 = 순서변경</span>
         <div style="display:flex; gap:0.4rem; flex-shrink:0;">
-            <button class="btn" id="settingsBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#9881; 설정</button>
-            <button class="btn" id="adminDateBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128197;
-                날짜설정</button>
-            <button class="btn" id="exportCsvBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128190;
-                CSV</button>
-            <button class="btn" id="auditBtn" style="font-size:0.72rem; padding:0.25rem 0.6rem;">&#128203; 변경이력</button>
-            <button class="btn btn-danger" id="adminClearAll"
-                style="font-size:0.72rem; padding:0.25rem 0.6rem; opacity:0.7;" title="모든 연락처 삭제">&#9888; 전체삭제</button>
-            <button class="btn btn-danger" id="adminLogout"
-                style="font-size:0.72rem; padding:0.25rem 0.6rem;">저장후나감</button>
+            <!-- 숨김 처리된 더미 엘리먼트 (app.js 호환성 유지용) -->
+            <button class="btn" id="settingsBtn" style="display:none;"></button>
+            <button class="btn" id="adminDateBtn" style="display:none;"></button>
+            <button class="btn" id="exportCsvBtn" style="display:none;"></button>
+            <button class="btn" id="auditBtn" style="display:none;"></button>
+            <button class="btn" id="adminClearAll" style="display:none;"></button>
+            <button class="btn btn-danger" id="adminLogout" style="font-size:0.72rem; padding:0.25rem 0.6rem;">✕ 편집 모드 종료</button>
         </div>
     </div>
 

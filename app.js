@@ -612,13 +612,26 @@ var App = {
             }
         });
 
-        // 관리자 버튼
-        document.getElementById('adminBtn').addEventListener('click', function () {
-            if (self.state.isAdmin) {
-                self._logoutAdmin();
-            } else {
-                document.getElementById('loginScreen').classList.remove('hidden');
-                setTimeout(function () { document.getElementById('loginPassword').focus(); }, 50);
+        // 설정 버튼 → 비밀번호 확인 후 드롭다운 오픈
+        document.getElementById('adminBtn').addEventListener('click', function (e) {
+            e.stopPropagation();
+            var dropdown = document.getElementById('settingsDropdown');
+            // 이미 인증됐으면 드롭다운 토글
+            if (App._settingsAuthed) {
+                dropdown.classList.toggle('hidden');
+                return;
+            }
+            // 미인증: 로그인 모달 열기
+            document.getElementById('loginScreen').classList.remove('hidden');
+            setTimeout(function () { document.getElementById('loginPassword').focus(); }, 50);
+        });
+
+        // 드롭다운 외부 클릭 시 닫기
+        document.addEventListener('click', function (e) {
+            var wrap = document.getElementById('settingsMenuWrap');
+            if (wrap && !wrap.contains(e.target)) {
+                var dd = document.getElementById('settingsDropdown');
+                if (dd) dd.classList.add('hidden');
             }
         });
 
@@ -632,15 +645,39 @@ var App = {
             if (e.key === 'Enter') self.doLogin();
         });
 
-        // 관리자 배너 버튼
-        document.getElementById('adminLogout').addEventListener('click', function () { self._logoutAdmin(); });
-        document.getElementById('adminDateBtn').addEventListener('click', function () { self.openDateModal(); });
-        document.getElementById('dm-save').addEventListener('click', function () { self.saveDateFromModal(); });
-        document.getElementById('dm-cancel').addEventListener('click', function () {
-            document.getElementById('dateModal').classList.add('hidden');
+        // 설정 드롭다운 항목 이벤트
+        document.getElementById('sd-editMode').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            if (App.state.isAdmin) {
+                App._logoutAdmin();
+            } else {
+                App.state.isAdmin = true;
+                sessionStorage.setItem('ext_admin', 'true');
+                Renderer.render();
+                App.updateAdminUI();
+                App._updateEditModeBtn();
+                App.showToast('편집 모드 활성화', 'success');
+            }
         });
-        document.getElementById('adminClearAll').addEventListener('click', function () {
-            if (!confirm('⚠️ 모든 연락처를 삭제하시겠습니까?\n\n삭제 전 CSV 백업을 권장합니다.\n(CSV 내보내기 버튼 → 저장 후 삭제)')) return;
+        document.getElementById('sd-settings').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            document.getElementById('settingsBtn').click();
+        });
+        document.getElementById('sd-date').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            App.openDateModal();
+        });
+        document.getElementById('sd-csv').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            App.exportCSV();
+        });
+        document.getElementById('sd-audit').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            App.openAuditModal();
+        });
+        document.getElementById('sd-clearAll').addEventListener('click', function () {
+            document.getElementById('settingsDropdown').classList.add('hidden');
+            if (!confirm('⚠️ 모든 연락처를 삭제하시겠습니까?\n\n삭제 전 CSV 백업을 권장합니다.\n(CSV 내보내기 → 저장 후 삭제)')) return;
             ContactDB.clearAll().then(function () {
                 App.state.contacts = {};
                 App.state.rooms = {};
@@ -651,10 +688,20 @@ var App = {
             });
         });
 
+        // 편집 모드 종료 배너 버튼
+        document.getElementById('adminLogout').addEventListener('click', function () { self._logoutAdmin(); });
+
         // CSV 내보내기
         document.getElementById('exportCsvBtn').addEventListener('click', function () {
             App.exportCSV();
         });
+
+        // 날짜설정 모달
+        document.getElementById('dm-save').addEventListener('click', function () { self.saveDateFromModal(); });
+        document.getElementById('dm-cancel').addEventListener('click', function () {
+            document.getElementById('dateModal').classList.add('hidden');
+        });
+
 
         // 변경이력 모달
         document.getElementById('auditBtn').addEventListener('click', function () {
@@ -888,52 +935,64 @@ var App = {
         var btn = document.getElementById('adminLogout');
         if (btn) { btn.disabled = true; btn.textContent = '저장 중...'; }
         try {
-            // 이전 저장이 진행 중이면 완료될 때까지 대기 (레이스 컨디션 방지)
             var waitCount = 0;
             while (ContactDB._saving || ContactDB._pendingSave) {
                 await new Promise(function (r) { setTimeout(r, 200); });
                 waitCount++;
-                if (waitCount > 75) break; // 최대 15초 대기 후 강제 탈출
+                if (waitCount > 75) break;
             }
-            // _save()는 내부 catch에서 오류를 처리하고 throw하지 않으므로
-            // saveFailBanner 표시 여부로 성공/실패를 판단
             await ContactDB._save();
             var failBanner = document.getElementById('saveFailBanner');
             if (failBanner && failBanner.style.display !== 'none') {
-                // 저장 실패 → 종료 중단 (finally에서 버튼 복구)
                 return;
             }
             this.state.isAdmin = false;
             sessionStorage.removeItem('ext_admin');
+            // 드롭다운 닫기 + editMode 버튼 상태 초기화
+            var dd = document.getElementById('settingsDropdown');
+            if (dd) dd.classList.add('hidden');
+            this._updateEditModeBtn();
             Renderer.render();
             this.updateAdminUI();
-            this.showToast('저장 완료 · 관리자 모드 종료', 'success');
+            this.showToast('저장 완료 · 편집 모드 종료', 'success');
         } finally {
-            // 성공/실패/예외 어떤 경우에도 버튼 상태를 항상 복구
-            if (btn) { btn.disabled = false; btn.textContent = '저장후나감'; }
+            if (btn) { btn.disabled = false; btn.textContent = '✕ 편집 모드 종료'; }
         }
     },
 
     doLogin: async function () {
         var pw = document.getElementById('loginPassword').value;
-        // #6: 서버가 해시를 반환하면 해시 비교, 오프라인 폴백은 평문 비교
         var isMatch;
         if (isHashedBrowser(this._adminPassword)) {
             isMatch = (await sha256Browser(pw)) === this._adminPassword;
         } else {
-            isMatch = pw === this._adminPassword; // 오프라인/미마이그레이션 폴백
+            isMatch = pw === this._adminPassword;
         }
         if (isMatch) {
-            this.state.isAdmin = true;
-            sessionStorage.setItem('ext_admin', 'true');
+            this._settingsAuthed = true;
             document.getElementById('loginScreen').classList.add('hidden');
             document.getElementById('loginPassword').value = '';
-            Renderer.render();
-            this.updateAdminUI();
-            this.showToast('관리자 모드 활성화', 'success');
+            // 인증 성공 후 드롭다운 오픈
+            var dd = document.getElementById('settingsDropdown');
+            if (dd) dd.classList.remove('hidden');
+            // 편집 모드 활성 상태에 따라 sd-editMode 버튼 뮸구 업데이트
+            this._updateEditModeBtn();
+            this.showToast('인증 성공. 설정 메뉴를 선택하세요.', 'success');
         } else {
             this.showToast('비밀번호가 틀렸습니다', 'error');
             document.getElementById('loginPassword').value = '';
+        }
+    },
+
+    _updateEditModeBtn: function () {
+        var btn = document.getElementById('sd-editMode');
+        if (!btn) return;
+        if (this.state.isAdmin) {
+            btn.textContent = '☑ 편집 모드 활성 중 (클릭하면 종료)';
+            btn.classList.add('active');
+        } else {
+            btn.textContent = '✎ 연락처 편집 모드';
+            btn.classList.remove('active');
         }
     },
 

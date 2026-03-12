@@ -612,26 +612,30 @@ var App = {
             }
         });
 
-        // 설정 버튼 → 비밀번호 확인 후 드롭다운 오픈
+        // 설정 버튼 → 드롭다운이 닫혀 있으면 비밀번호 확인, 열려 있으면 닫기
         document.getElementById('adminBtn').addEventListener('click', function (e) {
             e.stopPropagation();
             var dropdown = document.getElementById('settingsDropdown');
-            // 이미 인증됐으면 드롭다운 토글
-            if (App._settingsAuthed) {
-                dropdown.classList.toggle('hidden');
+            // 드롭다운이 열려있으면 닫고 인증 초기화
+            if (!dropdown.classList.contains('hidden')) {
+                dropdown.classList.add('hidden');
+                App._settingsAuthed = false;
                 return;
             }
-            // 미인증: 로그인 모달 열기
+            // 닫혀있으면 비밀번호 확인 후 오픈
             document.getElementById('loginScreen').classList.remove('hidden');
             setTimeout(function () { document.getElementById('loginPassword').focus(); }, 50);
         });
 
-        // 드롭다운 외부 클릭 시 닫기
+        // 드롭다운 외부 클릭 시 닫기 + 인증 초기화
         document.addEventListener('click', function (e) {
             var wrap = document.getElementById('settingsMenuWrap');
             if (wrap && !wrap.contains(e.target)) {
                 var dd = document.getElementById('settingsDropdown');
-                if (dd) dd.classList.add('hidden');
+                if (dd && !dd.classList.contains('hidden')) {
+                    dd.classList.add('hidden');
+                    App._settingsAuthed = false;
+                }
             }
         });
 
@@ -768,10 +772,9 @@ var App = {
             document.getElementById('settingsModal').classList.add('hidden');
         });
 
-        // 인쇄 버튼
+        // 인쇄 버튼 (항상 전체 인쇄)
         document.getElementById('printBtn').addEventListener('click', function () {
-            var f = document.getElementById('printFloorSel').value;
-            App.print(f || null);
+            App.print(null);
         });
     },
 
@@ -900,11 +903,7 @@ var App = {
             sel.innerHTML += '<option value="' + f.id + '">' + f.name + '</option>';
         });
 
-        var psel = document.getElementById('printFloorSel');
-        psel.innerHTML = '<option value="">전체</option>';
-        FLOORS.forEach(function (f) {
-            psel.innerHTML += '<option value="' + f.id + '">' + f.name + '</option>';
-        });
+
     },
 
     updateAdminUI: function () {

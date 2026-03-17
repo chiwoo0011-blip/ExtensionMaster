@@ -295,8 +295,23 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(function (e) {
+            navigator.serviceWorker.register('/sw.js').then(function (reg) {
+                // 새 SW가 설치되면 즉시 활성화
+                reg.addEventListener('updatefound', function () {
+                    var newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', function () {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // 새 버전 배포됨 → 자동 새로고침
+                            window.location.reload();
+                        }
+                    });
+                });
+            }).catch(function (e) {
                 console.warn('[SW] 등록 실패:', e);
+            });
+            // SW 교체 완료 시 새로고침
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                window.location.reload();
             });
         }
     </script>

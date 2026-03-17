@@ -61,10 +61,8 @@
                     <div class="sd-title">설정 메뉴</div>
                     <button class="sd-item" id="sd-editMode">✎ 연락처 편집 모드</button>
                     <button class="sd-item" id="sd-settings">⚙️ 앱 설정 (대표번호 등)</button>
-                    <button class="sd-item" id="sd-date">📅 업데이트 날짜 설정</button>
                     <button class="sd-item" id="sd-csv">💾 CSV 내보내기</button>
                     <button class="sd-item" id="sd-audit">📋 변경이력 보기</button>
-                    <button class="sd-item sd-danger" id="sd-clearAll">⚠ 전체 연락처 삭제</button>
                 </div>
             </div>
             <div class="help-wrap">
@@ -231,6 +229,10 @@
                 <label>기본 지역번호</label>
                 <input type="text" id="st-areaCode" placeholder="예: 02" maxlength="4">
             </div>
+            <div class="form-row">
+                <label>&#128197; 번호표 업데이트 날짜</label>
+                <input type="date" id="st-lastUpdated">
+            </div>
             <hr style="border-color:rgba(255,255,255,0.08);margin:0.75rem 0;">
             <div class="form-row">
                 <label>새 비밀번호 <span style="font-weight:400;opacity:0.5;">(변경 시만 입력)</span></label>
@@ -241,6 +243,7 @@
                 <input type="password" id="st-newPwConfirm" placeholder="비밀번호 재입력" autocomplete="new-password">
             </div>
             <div class="modal-actions">
+                <button class="btn btn-danger" id="st-clearAll" style="margin-right:auto;">⚠ 전체 연락처 삭제</button>
                 <button class="btn" id="st-cancel">닫기</button>
                 <button class="btn btn-primary" id="st-save">저장</button>
             </div>

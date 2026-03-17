@@ -667,10 +667,6 @@ var App = {
             document.getElementById('settingsDropdown').classList.add('hidden');
             document.getElementById('settingsBtn').click();
         });
-        document.getElementById('sd-date').addEventListener('click', function () {
-            document.getElementById('settingsDropdown').classList.add('hidden');
-            App.openDateModal();
-        });
         document.getElementById('sd-csv').addEventListener('click', function () {
             document.getElementById('settingsDropdown').classList.add('hidden');
             App.exportCSV();
@@ -679,19 +675,6 @@ var App = {
             document.getElementById('settingsDropdown').classList.add('hidden');
             App.openAuditModal();
         });
-        document.getElementById('sd-clearAll').addEventListener('click', function () {
-            document.getElementById('settingsDropdown').classList.add('hidden');
-            if (!confirm('⚠️ 모든 연락처를 삭제하시겠습니까?\n\n삭제 전 CSV 백업을 권장합니다.\n(CSV 내보내기 → 저장 후 삭제)')) return;
-            ContactDB.clearAll().then(function () {
-                App.state.contacts = {};
-                App.state.rooms = {};
-                ContactDB._audit = [];
-                Renderer.render();
-                App.updateStatInfo();
-                App.showToast('전체 삭제 완료', 'success');
-            });
-        });
-
         // 편집 모드 종료 배너 버튼
         document.getElementById('adminLogout').addEventListener('click', function () { self._logoutAdmin(); });
 
@@ -734,6 +717,7 @@ var App = {
             var s = ContactDB._data.settings || {};
             document.getElementById('st-mainPhone').value = s.mainPhone || '';
             document.getElementById('st-areaCode').value = s.areaCode || '02';
+            document.getElementById('st-lastUpdated').value = s.lastUpdated || '';
             document.getElementById('st-newPw').value = '';
             document.getElementById('st-newPwConfirm').value = '';
             document.getElementById('settingsModal').classList.remove('hidden');
@@ -744,7 +728,8 @@ var App = {
             var newPw = document.getElementById('st-newPw').value;
             var newPwCfm = document.getElementById('st-newPwConfirm').value;
 
-            var settingsToSave = { mainPhone: mainPhone, areaCode: areaCode };
+            var lastUpdated = document.getElementById('st-lastUpdated').value;
+            var settingsToSave = { mainPhone: mainPhone, areaCode: areaCode, lastUpdated: lastUpdated };
 
             // 비밀번호 변경 처리
             if (newPw || newPwCfm) {
@@ -770,6 +755,18 @@ var App = {
         });
         document.getElementById('st-cancel').addEventListener('click', function () {
             document.getElementById('settingsModal').classList.add('hidden');
+        });
+        document.getElementById('st-clearAll').addEventListener('click', function () {
+            if (!confirm('⚠️ 모든 연락처를 삭제하시겠습니까?\n\n삭제 전 CSV 백업을 권장합니다.\n(CSV 내보내기 → 저장 후 삭제)')) return;
+            document.getElementById('settingsModal').classList.add('hidden');
+            ContactDB.clearAll().then(function () {
+                App.state.contacts = {};
+                App.state.rooms = {};
+                ContactDB._audit = [];
+                Renderer.render();
+                App.updateStatInfo();
+                App.showToast('전체 삭제 완료', 'success');
+            });
         });
 
         // 인쇄 버튼 (항상 전체 인쇄)

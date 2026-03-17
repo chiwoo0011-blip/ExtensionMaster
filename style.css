@@ -49,6 +49,32 @@
     --phone-color: #fcd34d;
 }
 
+/* 로즈골드 */
+[data-theme="rosegold"] {
+    --primary: #e8908a;
+    --secondary: #d4a96a;
+    --body-bg: #1a0d10;
+    --bg-grad-1: rgba(120, 50, 60, 0.65);
+    --bg-grad-2: rgba(100, 70, 30, 0.5);
+    --card-bg: rgba(28, 10, 15, 0.92);
+    --ext-color: #fbb6b6;
+    --phone-color: #fde4a0;
+    --glass-border: rgba(232, 144, 138, 0.2);
+}
+
+/* 모노크롬 */
+[data-theme="mono"] {
+    --primary: #94a3b8;
+    --secondary: #64748b;
+    --body-bg: #0a0a0a;
+    --bg-grad-1: rgba(40, 40, 40, 0.7);
+    --bg-grad-2: rgba(20, 20, 20, 0.6);
+    --card-bg: rgba(15, 15, 15, 0.95);
+    --ext-color: #e2e8f0;
+    --phone-color: #94a3b8;
+    --glass-border: rgba(255, 255, 255, 0.12);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -833,7 +859,65 @@ body {
     background: rgba(168, 85, 247, 0.25);
 }
 
+/* ===== Card Style Variants ===== */
+
+/* Glass: 유리 반투명 효과 */
+[data-card="glass"] .contact-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-radius: 0.85rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+[data-card="glass"] .contact-card:hover {
+    background: rgba(255, 255, 255, 0.09);
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Solid: 불투명 단색 */
+[data-card="solid"] .contact-card {
+    background: color-mix(in srgb, var(--body-bg) 85%, var(--primary) 15%);
+    border-color: rgba(255, 255, 255, 0.16);
+    border-radius: 0.4rem;
+}
+[data-card="solid"] .contact-card:hover {
+    background: color-mix(in srgb, var(--body-bg) 75%, var(--primary) 25%);
+    border-color: rgba(255, 255, 255, 0.26);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+/* Line: 층 색상 좌측 강조선 */
+[data-card="line"] .contact-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: none;
+    border-left: 3px solid var(--fc, var(--primary));
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-left: 0.75rem;
+}
+[data-card="line"] .contact-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+}
+[data-card="line"] .contact-grid {
+    gap: 0.25rem;
+}
+
 /* ===== Theme Button ===== */
+#cardStyleBtn {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.7rem;
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.3);
+    color: #a5b4fc;
+    min-width: 76px;
+}
+#cardStyleBtn:hover {
+    background: rgba(99, 102, 241, 0.25);
+}
+
 #themeBtn {
     font-size: 0.78rem;
     padding: 0.35rem 0.7rem;

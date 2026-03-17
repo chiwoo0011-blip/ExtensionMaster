@@ -102,8 +102,8 @@ var FLOORS = [
 FLOORS.sort(function (a, b) { return a.order - b.order; });
 
 // ===== 테마 =====
-var THEMES = ['dark', 'midnight', 'forest', 'sunset'];
-var THEME_NAMES = { dark: '🌙 다크', midnight: '🔵 미드나잇', forest: '🌿 포레스트', sunset: '🌅 선셋' };
+var THEMES = ['dark', 'midnight', 'forest', 'sunset', 'rosegold', 'mono'];
+var THEME_NAMES = { dark: '🌙 다크', midnight: '🔵 미드나잇', forest: '🌿 포레스트', sunset: '🌅 선셋', rosegold: '🌸 로즈골드', mono: '⬛ 모노크롬' };
 
 function applyTheme(theme) {
     document.body.setAttribute('data-theme', theme);
@@ -117,6 +117,24 @@ function initTheme() {
 function cycleTheme() {
     var cur = document.body.getAttribute('data-theme') || 'dark';
     applyTheme(THEMES[(THEMES.indexOf(cur) + 1) % THEMES.length]);
+}
+
+// ===== 카드 스타일 =====
+var CARD_STYLES = ['default', 'solid', 'glass', 'line'];
+var CARD_STYLE_NAMES = { default: '🃏 기본', solid: '■ 불투명', glass: '✨ 글라스', line: '▌ 라인' };
+
+function applyCardStyle(style) {
+    document.body.setAttribute('data-card', style);
+    localStorage.setItem('ext_card', style);
+    var btn = document.getElementById('cardStyleBtn');
+    if (btn) btn.textContent = CARD_STYLE_NAMES[style] || style;
+}
+function initCardStyle() {
+    applyCardStyle(localStorage.getItem('ext_card') || 'default');
+}
+function cycleCardStyle() {
+    var cur = document.body.getAttribute('data-card') || 'default';
+    applyCardStyle(CARD_STYLES[(CARD_STYLES.indexOf(cur) + 1) % CARD_STYLES.length]);
 }
 
 var SEED_DATA = [
@@ -548,6 +566,7 @@ var App = {
             if (sessionStorage.getItem('ext_admin') === 'true') this.state.isAdmin = true;
 
             initTheme();
+            initCardStyle();
             this.bindEvents();
             this.updateFloorFilter();
             Renderer.render();
@@ -595,6 +614,9 @@ var App = {
 
         // 테마 버튼
         document.getElementById('themeBtn').addEventListener('click', function () { cycleTheme(); });
+
+        // 카드 스타일 버튼
+        document.getElementById('cardStyleBtn').addEventListener('click', function () { cycleCardStyle(); });
 
         // 새로고침
         document.getElementById('refreshBtn').addEventListener('click', async function () {

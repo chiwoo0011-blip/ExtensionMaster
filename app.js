@@ -388,17 +388,15 @@ function renderCard(c, isAdmin, showLocation) {
         h += '<button class="cc-fav-btn' + (fav ? ' active' : '') + '" data-id="' + c.id + '" title="즐겨찾기 추가/제거">'
             + (fav ? '★' : '☆') + '</button>';
     }
-    if (c.role) h += '<div class="cc-role">' + escHtml(c.role) + '</div>';
-    h += '<div class="cc-name">' + escHtml(c.name) + '</div>';
-    if (c.ext) {
-        var main = toDialNum(s.mainPhone || '', s.areaCode || '02');
-        var extHref = main ? ' href="tel:' + main + ',,' + c.ext + '"' : '';
-        h += '<a class="cc-ext"' + extHref + '>내선 ' + escHtml(c.ext) + '</a>';
-    }
-    if (c.phone) {
-        h += '<a class="cc-phone" href="tel:' + toDialNum(c.phone, s.areaCode || '02') + '">' + escHtml(c.phone) + '</a>';
-    }
-    if (c.address) h += '<div class="cc-address">' + escHtml(c.address) + '</div>';
+    h += '<div class="cc-name-row">'
+        + '<span class="cc-role">' + (c.role ? escHtml(c.role) : '') + '</span>'
+        + '<span class="cc-name">' + escHtml(c.name) + '</span>'
+        + '</div>';
+    var main = toDialNum(s.mainPhone || '', s.areaCode || '02');
+    var extHref = c.ext && main ? ' href="tel:' + main + ',,' + c.ext + '"' : '';
+    h += '<a class="cc-ext"' + extHref + '>' + (c.ext ? '내선 ' + escHtml(c.ext) : '') + '</a>';
+    h += '<a class="cc-phone"' + (c.phone ? ' href="tel:' + toDialNum(c.phone, s.areaCode || '02') + '"' : '') + '>' + (c.phone ? escHtml(c.phone) : '') + '</a>';
+    h += '<div class="cc-address">' + (c.address ? escHtml(c.address) : '') + '</div>';
     if (showLocation) {
         var floor = FLOORS.find(function (f) { return f.id === c.floorId; });
         var room = c.roomId ? App.state.rooms[c.roomId] : null;

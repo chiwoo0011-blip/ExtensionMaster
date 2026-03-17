@@ -357,6 +357,8 @@ body {
     line-height: 1.55;
     transition: border-color 0.18s, box-shadow 0.18s, background 0.35s;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .contact-card:hover {
@@ -372,23 +374,35 @@ body {
     cursor: grabbing;
 }
 
+/* 직책 + 이름 한 줄 */
+.cc-name-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin-bottom: 0.15rem;
+    flex-wrap: nowrap;
+    min-width: 0;
+}
+
 .cc-role {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: #a78bfa;
     font-weight: 500;
-    margin-bottom: 0.05rem;
     letter-spacing: 0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .cc-name {
     font-size: 1.02rem;
     font-weight: 700;
     color: #e2e8f0;
-    margin-bottom: 0.15rem;
     word-break: keep-all;
     overflow-wrap: break-word;
+    min-width: 0;
 }
 
+/* 빈 필드도 높이 유지 */
 .cc-ext {
     display: block;
     font-size: 0.92rem;
@@ -398,6 +412,7 @@ body {
     letter-spacing: 0.03em;
     transition: color 0.35s;
     text-decoration: none;
+    min-height: 1.42em;
 }
 
 .cc-ext[href]:hover {
@@ -413,6 +428,7 @@ body {
     font-family: 'Consolas', 'Courier New', monospace;
     transition: color 0.35s;
     text-decoration: none;
+    min-height: 1.35em;
 }
 
 .cc-phone[href]:hover {
@@ -426,6 +442,7 @@ body {
     margin-top: 0.1rem;
     word-break: keep-all;
     overflow-wrap: break-word;
+    min-height: 1.22em;
 }
 
 .cc-fav-btn {

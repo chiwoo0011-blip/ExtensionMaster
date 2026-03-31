@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>카드 레이아웃 미리보기</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    font-family: 'Malgun Gothic', sans-serif;
+    background: #08111f;
+    background-image:
+        radial-gradient(ellipse at 20% 20%, rgba(40,55,110,0.7) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 80%, rgba(70,30,110,0.55) 0%, transparent 55%);
+    color: #e2e8f0;
+    padding: 2rem;
+    min-height: 100vh;
+}
+h2 { color: #a5b4fc; margin-bottom: 1.5rem; font-size: 1.1rem; }
+.section { margin-bottom: 2.5rem; }
+.label {
+    font-size: 0.75rem; color: #64748b; margin-bottom: 0.6rem;
+    text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.75rem;
+    max-width: 900px;
+}
+
+/* ===== 카드 공통 ===== */
+.contact-card {
+    position: relative;
+    background: rgba(8,15,30,0.9);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.4rem;
+    padding: 0.7rem 0.85rem;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+}
+.cc-name-row {
+    display: flex; align-items: baseline; gap: 0.35rem;
+    margin-bottom: 0.15rem; min-width: 0;
+}
+.cc-role {
+    font-size: 0.72rem; color: #a78bfa; font-weight: 500;
+    white-space: nowrap; flex-shrink: 0;
+}
+.cc-name {
+    font-size: 1.02rem; font-weight: 700; color: #e2e8f0;
+    word-break: keep-all; min-width: 0;
+}
+.cc-ext {
+    display: block; font-size: 0.92rem; font-weight: 800;
+    color: #86efac; font-family: 'Consolas', monospace;
+    text-decoration: none; min-height: 1.42em;
+}
+.cc-phone {
+    display: block; font-size: 0.87rem; font-weight: 700;
+    color: #fed7aa; font-family: 'Consolas', monospace;
+    text-decoration: none; min-height: 1.35em;
+}
+.cc-address {
+    font-size: 0.79rem; color: #fef08a;
+    margin-top: 0.1rem; min-height: 1.22em;
+    word-break: keep-all;
+}
+.fav { position:absolute; top:0.3rem; right:0.3rem; color:rgba(255,255,255,0.18); font-size:0.8rem; }
+
+/* 비교용 구분선 */
+.compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    max-width: 900px;
+}
+.compare-col h3 {
+    font-size: 0.82rem; color: #64748b; margin-bottom: 0.75rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    padding-bottom: 0.4rem; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+/* 이전 스타일 */
+.old-card {
+    background: rgba(8,15,30,0.9);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 0.4rem;
+    padding: 0.7rem 0.85rem;
+    line-height: 1.55;
+    margin-bottom: 0.75rem;
+}
+.old-role { font-size:0.75rem; color:#a78bfa; font-weight:500; margin-bottom:0.05rem; }
+.old-name { font-size:1.02rem; font-weight:700; color:#e2e8f0; margin-bottom:0.15rem; }
+.old-ext  { display:block; font-size:0.92rem; font-weight:800; color:#86efac; font-family:'Consolas',monospace; }
+.old-phone{ display:block; font-size:0.87rem; font-weight:700; color:#fed7aa; font-family:'Consolas',monospace; }
+.old-addr { font-size:0.79rem; color:#fef08a; margin-top:0.1rem; }
+</style>
+</head>
+<body>
+
+<h2>📋 카드 레이아웃 미리보기</h2>
+
+<!-- 변경 전후 비교 -->
+<div class="section">
+    <div class="label">변경 전 vs 변경 후 비교</div>
+    <div class="compare">
+        <div class="compare-col">
+            <h3>❌ 변경 전 — 필드 없으면 높이 다름</h3>
+            <!-- 정보 가득 -->
+            <div class="old-card">
+                <div class="old-role">교장</div>
+                <div class="old-name">홍길동</div>
+                <a class="old-ext">내선 100</a>
+                <a class="old-phone">2123-8100</a>
+                <div class="old-addr">116동 5층</div>
+            </div>
+            <!-- 정보 비어있음 → 높이 다름 -->
+            <div class="old-card">
+                <div class="old-name">김철수</div>
+                <a class="old-ext">내선 200</a>
+                <!-- phone, address 없음 → 카드 짧아짐 -->
+            </div>
+            <div class="old-card">
+                <div class="old-role">행정실장</div>
+                <div class="old-name">이영희</div>
+                <!-- ext 없음 -->
+                <a class="old-phone">2123-8200</a>
+            </div>
+        </div>
+
+        <div class="compare-col">
+            <h3>✅ 변경 후 — 높이 균일 + 직책/이름 한줄</h3>
+            <!-- 정보 가득 -->
+            <div class="contact-card">
+                <span class="fav">☆</span>
+                <div class="cc-name-row">
+                    <span class="cc-role">교장</span>
+                    <span class="cc-name">홍길동</span>
+                </div>
+                <a class="cc-ext">내선 100</a>
+                <a class="cc-phone">2123-8100</a>
+                <div class="cc-address">116동 5층</div>
+            </div>
+            <br>
+            <!-- phone, address 없음 → 그래도 높이 같음 -->
+            <div class="contact-card">
+                <span class="fav">☆</span>
+                <div class="cc-name-row">
+                    <span class="cc-role"></span>
+                    <span class="cc-name">김철수</span>
+                </div>
+                <a class="cc-ext">내선 200</a>
+                <a class="cc-phone"></a>
+                <div class="cc-address"></div>
+            </div>
+            <br>
+            <div class="contact-card">
+                <span class="fav">☆</span>
+                <div class="cc-name-row">
+                    <span class="cc-role">행정실장</span>
+                    <span class="cc-name">이영희</span>
+                </div>
+                <a class="cc-ext"></a>
+                <a class="cc-phone">2123-8200</a>
+                <div class="cc-address"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 실제 그리드 모습 -->
+<div class="section">
+    <div class="label">실제 그리드 정렬 모습 (높이 균일)</div>
+    <div class="grid">
+        <div class="contact-card">
+            <span class="fav">☆</span>
+            <div class="cc-name-row"><span class="cc-role">교장</span><span class="cc-name">홍길동</span></div>
+            <a class="cc-ext">내선 100</a>
+            <a class="cc-phone">2123-8100</a>
+            <div class="cc-address">116동 5층 교장실</div>
+        </div>
+        <div class="contact-card">
+            <span class="fav">☆</span>
+            <div class="cc-name-row"><span class="cc-role">교감</span><span class="cc-name">박민수</span></div>
+            <a class="cc-ext">내선 101</a>
+            <a class="cc-phone">2123-8101</a>
+            <div class="cc-address"></div>
+        </div>
+        <div class="contact-card">
+            <span class="fav">☆</span>
+            <div class="cc-name-row"><span class="cc-role"></span><span class="cc-name">김철수</span></div>
+            <a class="cc-ext">내선 200</a>
+            <a class="cc-phone"></a>
+            <div class="cc-address"></div>
+        </div>
+        <div class="contact-card">
+            <span class="fav">☆</span>
+            <div class="cc-name-row"><span class="cc-role">행정실장</span><span class="cc-name">이영희</span></div>
+            <a class="cc-ext"></a>
+            <a class="cc-phone">2123-8200</a>
+            <div class="cc-address">행정실</div>
+        </div>
+        <div class="contact-card">
+            <span class="fav">☆</span>
+            <div class="cc-name-row"><span class="cc-role">교무담당</span><span class="cc-name">정지훈</span></div>
+            <a class="cc-ext">내선 305</a>
+            <a class="cc-phone">2123-8305</a>
+            <div class="cc-address">3층 교무실</div>
+        </div>
+        <div class="contact-card">
+            <span class="fav">★</span>
+            <div class="cc-name-row"><span class="cc-role"></span><span class="cc-name">안내실</span></div>
+            <a class="cc-ext">내선 500</a>
+            <a class="cc-phone"></a>
+            <div class="cc-address"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

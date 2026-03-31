@@ -1,5 +1,5 @@
 // ===== ExtensionMaster - Service Worker (Network-First) =====
-const CACHE_NAME = 'ext-master-v3-20260317';
+const CACHE_NAME = 'ext-master-v3-20260331';
 const APP_SHELL  = ['/', '/app.js', '/style.css', '/manifest.json'];
 
 self.addEventListener('install', function(e) {
